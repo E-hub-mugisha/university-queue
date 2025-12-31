@@ -26,7 +26,7 @@ class ServiceRequestController extends Controller
             'attachments.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:5120'
         ]);
 
-        $studentId = Auth::user()->id;
+        $studentId = Auth::user()->student->id;
 
         $serviceRequest = ServiceRequest::create([
             'student_id' => $studentId,
