@@ -1,6 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DepartmentController;
+use App\Http\Controllers\Admin\FacultyController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Staff\StaffDashboardController;
+use App\Http\Controllers\Student\StudentDashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -17,4 +23,42 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Student routes
+    Route::middleware('role:student')->group(function () {
+        Route::get('/student/dashboard', [StudentDashboardController::class, 'dashboard']);
+    });
+
+    // Staff routes
+    Route::middleware('role:staff')->group(function () {
+        Route::get('/staff/dashboard', [StaffDashboardController::class, 'dashboard']);
+    });
+
+    // Admin routes
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/admin/dashboard', [DashboardController::class, 'dashboard']);
+
+        Route::prefix('admin')->name('admin.')->group(function () {
+            Route::get('users', [UserController::class, 'index'])->name('users.index');
+            Route::post('users', [UserController::class, 'store'])->name('users.store');
+            Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
+            Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+        });
+
+        Route::prefix('admin')->name('admin.')->group(function () {
+            Route::get('departments', [DepartmentController::class, 'index'])->name('departments.index');
+            Route::post('departments', [DepartmentController::class, 'store'])->name('departments.store');
+            Route::put('departments/{department}', [DepartmentController::class, 'update'])->name('departments.update');
+            Route::delete('departments/{department}', [DepartmentController::class, 'destroy'])->name('departments.destroy');
+        });
+
+        Route::prefix('admin')->name('admin.')->group(function () {
+            Route::get('faculties', [FacultyController::class, 'index'])->name('faculties.index');
+            Route::post('faculties', [FacultyController::class, 'store'])->name('faculties.store');
+            Route::put('faculties/{faculty}', [FacultyController::class, 'update'])->name('faculties.update');
+            Route::delete('faculties/{faculty}', [FacultyController::class, 'destroy'])->name('faculties.destroy');
+        });
+    });
+});
+
+require __DIR__ . '/auth.php';
