@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\FacultyController;
+use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Staff\StaffDashboardController;
@@ -57,6 +59,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('faculties', [FacultyController::class, 'store'])->name('faculties.store');
             Route::put('faculties/{faculty}', [FacultyController::class, 'update'])->name('faculties.update');
             Route::delete('faculties/{faculty}', [FacultyController::class, 'destroy'])->name('faculties.destroy');
+        });
+
+        Route::prefix('admin')->name('admin.')->group(function () {
+            Route::get('staff', [StaffController::class, 'index'])->name('staff.index');
+            Route::post('staff', [StaffController::class, 'store'])->name('staff.store');
+            Route::put('staff/{staff}', [StaffController::class, 'update'])->name('staff.update');
+            Route::delete('staff/{staff}', [StaffController::class, 'destroy'])->name('staff.destroy');
+        });
+
+        Route::prefix('admin')->name('admin.')->group(function () {
+            Route::get('students', [StudentController::class, 'index'])->name('students.index');
+            Route::post('students', [StudentController::class, 'store'])->name('students.store');
+            Route::put('students/{student}', [StudentController::class, 'update'])->name('students.update');
+            Route::delete('students/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
         });
     });
 });
