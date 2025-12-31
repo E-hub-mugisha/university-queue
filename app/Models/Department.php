@@ -8,12 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class Department extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = ['name', 'description'];
 
     // Relationships
     public function requests()
     {
-        return $this->hasMany(\App\Models\Request::class, 'department_id');
+        return $this->hasMany(ServiceRequest::class, 'department_id');
+    }
+    public function serviceTypes()
+    {
+        return $this->hasMany(ServiceType::class);
     }
 }

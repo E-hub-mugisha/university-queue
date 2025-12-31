@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Staff\StaffDashboardController;
+use App\Http\Controllers\Student\ServiceRequestController;
 use App\Http\Controllers\Student\StudentDashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +30,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Student routes
     Route::middleware('role:student')->group(function () {
         Route::get('/student/dashboard', [StudentDashboardController::class, 'dashboard']);
+
+        Route::prefix('student')->name('student.')->group(function () {
+            Route::get('request/create', [ServiceRequestController::class, 'create'])->name('request.create');
+            Route::post('request/store', [ServiceRequestController::class, 'store'])->name('request.store');
+        });
     });
 
     // Staff routes

@@ -20,6 +20,6 @@ class Faculty extends Model
     // Relationship with Requests (if needed)
     public function requests()
     {
-        return $this->hasMany(\App\Models\Request::class, 'faculty_id');
+        return $this->hasMany(ServiceRequest::class, 'faculty_id');
     }
 }
