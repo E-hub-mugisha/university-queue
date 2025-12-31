@@ -11,6 +11,22 @@ use Illuminate\Support\Facades\Auth;
 
 class ServiceRequestController extends Controller
 {
+    public function index()
+    {
+        $student = Auth::user()->student;
+
+        if (!$student) {
+            return back()->with('error', 'Student profile not found.');
+        }
+
+        $requests = ServiceRequest::with(['department', 'serviceType'])
+            ->where('student_id', $student->id)
+            ->latest()
+            ->paginate(10);
+
+        return view('student.requests.index', compact('requests'));
+    }
+
     public function create()
     {
         $departments = Department::with('serviceTypes')->get();
