@@ -9,7 +9,7 @@ class ServiceRequest extends Model
     protected $fillable = [
         'request_number',
         'student_id',
-        'office_id',
+        'department_id',
         'service_type_id',
         'description',
         'status'

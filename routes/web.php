@@ -26,6 +26,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/api/service-types/{department}', function($departmentId){
+    return \App\Models\ServiceType::where('department_id',$departmentId)->get();
+});
+
 Route::middleware(['auth', 'verified'])->group(function () {
     // Student routes
     Route::middleware('role:student')->group(function () {
