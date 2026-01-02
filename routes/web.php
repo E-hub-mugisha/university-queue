@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminServiceRequestController;
+use App\Http\Controllers\Admin\AppointmentController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\FacultyController;
@@ -17,9 +18,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -37,8 +36,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/student/dashboard', [StudentDashboardController::class, 'dashboard']);
 
         Route::prefix('student')->name('student.')->group(function () {
-            Route::get('request/create', [ServiceRequestController::class, 'create'])->name('request.create');
-            Route::post('request/store', [ServiceRequestController::class, 'store'])->name('request.store');
+            Route::get('requests', [ServiceRequestController::class, 'index'])->name('requests.index');
+            Route::get('requests/create', [ServiceRequestController::class, 'create'])->name('requests.create');
+            Route::post('requests', [ServiceRequestController::class, 'store'])->name('requests.store');
+            Route::get('requests/{request}', [ServiceRequestController::class, 'show'])->name('requests.show');
         });
     });
 
@@ -94,6 +95,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('requests/{request}', [AdminServiceRequestController::class, 'update'])->name('requests.update');
             Route::delete('requests/{request}', [AdminServiceRequestController::class, 'destroy'])->name('requests.destroy');
             Route::post('requests/{request}/reply', [AdminServiceRequestController::class, 'reply'])->name('requests.reply');
+
+            Route::post('requests/{serviceRequest}/appointment', [AppointmentController::class, 'store'])->name('appointments.store');
         });
     });
 });

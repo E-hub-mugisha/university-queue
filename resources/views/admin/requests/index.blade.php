@@ -30,6 +30,8 @@
                         <th>Department</th>
                         <th>Service Type</th>
                         <th>Status</th>
+                        <th>Priority</th>
+                        <th>Waiting Time</th>
                         <th>Submitted On</th>
                         <th>Action</th>
                     </tr>
@@ -56,6 +58,12 @@
                             @endphp
                             <span class="badge bg-{{ $badge }}">{{ $req->status }}</span>
                         </td>
+                        <td>
+                            <span class="badge bg-{{ $req->priority === 'urgent' ? 'danger' : 'secondary' }}">
+                                {{ ucfirst($req->priority) }}
+                            </span>
+                        </td>
+                        <td>{{ $req->waiting_time }}</td>
                         <td>{{ $req->created_at->format('d M Y h:i A') }}</td>
                         <td>
                             <a href="{{ route('admin.requests.show', $req->id) }}" class="btn btn-sm btn-outline-dark">

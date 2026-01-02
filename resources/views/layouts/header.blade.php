@@ -48,49 +48,69 @@ if (!function_exists('activeClass')) {
                 <div class="container">
                     <ul class="nav">
 
+                        {{-- Dashboard - visible to all --}}
                         <li class="nav-item">
-                            <a href="{{ route('dashboard') }}" class="nav-link">
+                            <a href="{{ route('dashboard') }}" class="nav-link {{ activeClass('dashboard') }}">
                                 <i class="bi bi-grid-fill me-1"></i> Dashboard
                             </a>
                         </li>
 
+                        @php $role = Auth::user()->role; @endphp
+
+                        {{-- Admin-only menus --}}
+                        @if($role === 'admin')
                         <li class="nav-item">
-                            <a href="{{ route('admin.users.index') }}" class="nav-link">
+                            <a href="{{ route('admin.users.index') }}" class="nav-link {{ activeClass('admin.users.*') }}">
                                 <i class="bi bi-people-fill me-1"></i> Users
                             </a>
                         </li>
-
                         <li class="nav-item">
-                            <a href="{{ route('admin.departments.index') }}" class="nav-link">
+                            <a href="{{ route('admin.departments.index') }}" class="nav-link {{ activeClass('admin.departments.*') }}">
                                 <i class="bi bi-building me-1"></i> Departments
                             </a>
                         </li>
-
                         <li class="nav-item">
-                            <a href="{{ route('admin.faculties.index') }}" class="nav-link">
+                            <a href="{{ route('admin.faculties.index') }}" class="nav-link {{ activeClass('admin.faculties.*') }}">
                                 <i class="bi bi-mortarboard-fill me-1"></i> Faculties
                             </a>
                         </li>
-
                         <li class="nav-item">
-                            <a href="{{ route('admin.staff.index') }}" class="nav-link">
+                            <a href="{{ route('admin.staff.index') }}" class="nav-link {{ activeClass('admin.staff.*') }}">
                                 <i class="bi bi-person-badge-fill me-1"></i> Staff
                             </a>
                         </li>
-
                         <li class="nav-item">
-                            <a href="{{ route('admin.students.index') }}" class="nav-link">
+                            <a href="{{ route('admin.students.index') }}" class="nav-link {{ activeClass('admin.students.*') }}">
                                 <i class="bi bi-person-lines-fill me-1"></i> Students
                             </a>
                         </li>
+                        @endif
 
+                        {{-- Staff menus --}}
+                        @if($role === 'staff')
                         <li class="nav-item">
-                            <a href="{{ route('admin.requests.index') }}" class="nav-link">
-                                <i class="bi bi-list-ul me-1"></i> Requests
+                            <a href="{{ route('staff.requests.index') }}" class="nav-link {{ activeClass('staff.requests.*') }}">
+                                <i class="bi bi-list-ul me-1"></i> Assigned Requests
                             </a>
                         </li>
+                        @endif
+
+                        {{-- Student menus --}}
+                        @if($role === 'student')
+                        <li class="nav-item">
+                            <a href="{{ route('student.requests.index') }}" class="nav-link {{ activeClass('student.requests.*') }}">
+                                <i class="bi bi-list-check me-1"></i> My Requests
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('student.requests.create') }}" class="nav-link {{ activeClass('student.requests.create') }}">
+                                <i class="bi bi-plus-circle me-1"></i> Submit Request
+                            </a>
+                        </li>
+                        @endif
 
                     </ul>
+
                 </div>
             </nav>
             <!-- User Dropdown + Burger -->

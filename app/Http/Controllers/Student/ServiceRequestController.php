@@ -49,7 +49,9 @@ class ServiceRequestController extends Controller
             'department_id' => $request->department_id,
             'service_type_id' => $request->service_type_id,
             'description' => $request->description,
-            'status' => 'Submitted'
+            'status' => 'Submitted',
+            'priority' => $request->priority ?? 'normal',
+            'queued_at' => now(),
         ]);
 
         // Upload files
@@ -66,5 +68,12 @@ class ServiceRequestController extends Controller
         }
 
         return back()->with('success', 'Request submitted successfully!');
+    }
+    public function show(ServiceRequest $request)
+    {
+
+        $request->load(['department', 'serviceType', 'attachments', 'replies']);
+
+        return view('student.requests.show', compact('request'));
     }
 }

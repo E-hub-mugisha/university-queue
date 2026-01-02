@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\RequestRepliedMail;
 use App\Models\ServiceRequest;
 use App\Models\ServiceRequestReply;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class AdminServiceRequestController extends Controller
 {
@@ -59,6 +61,9 @@ class AdminServiceRequestController extends Controller
         // Update request status
         $request->status = $r->status;
         $request->save();
+
+        Mail::to($request->student->user->email)
+            ->send(new RequestRepliedMail($request));
 
         return back()->with('success', 'Reply sent successfully.');
     }

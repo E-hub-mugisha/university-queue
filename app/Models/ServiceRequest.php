@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class ServiceRequest extends Model
@@ -57,5 +58,14 @@ class ServiceRequest extends Model
     public function replies()
     {
         return $this->hasMany(ServiceRequestReply::class)->latest();
+    }
+    public function appointment()
+    {
+        return $this->hasOne(Appointment::class);
+    }
+
+    public function getWaitingTimeAttribute()
+    {
+        return Carbon::parse($this->queued_at)->diffForHumans(null, true);
     }
 }

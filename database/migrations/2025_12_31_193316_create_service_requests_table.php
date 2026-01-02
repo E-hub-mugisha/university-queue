@@ -32,6 +32,10 @@ return new class extends Migration
                 'Resolved',
                 'Closed'
             ])->default('Submitted');
+
+            $table->enum('priority', ['normal', 'urgent'])->default('normal');
+            $table->timestamp('queued_at')->nullable();
+
             $table->timestamps();
         });
     }
