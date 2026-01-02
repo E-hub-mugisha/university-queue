@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminServiceRequestController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\FacultyController;
@@ -26,8 +27,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/api/service-types/{department}', function($departmentId){
-    return \App\Models\ServiceType::where('department_id',$departmentId)->get();
+Route::get('/api/service-types/{department}', function ($departmentId) {
+    return \App\Models\ServiceType::where('department_id', $departmentId)->get();
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -83,6 +84,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('students', [StudentController::class, 'store'])->name('students.store');
             Route::put('students/{student}', [StudentController::class, 'update'])->name('students.update');
             Route::delete('students/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
+        });
+
+        Route::prefix('admin')->name('admin.')->group(function () {
+            Route::get('requests', [AdminServiceRequestController::class, 'index'])->name('requests.index');
+            Route::get('requests/create', [AdminServiceRequestController::class, 'create'])->name('requests.create');
+            Route::post('requests', [AdminServiceRequestController::class, 'store'])->name('requests.store');
+            Route::get('requests/{request}', [AdminServiceRequestController::class, 'show'])->name('requests.show');
+            Route::put('requests/{request}', [AdminServiceRequestController::class, 'update'])->name('requests.update');
+            Route::delete('requests/{request}', [AdminServiceRequestController::class, 'destroy'])->name('requests.destroy');
+            Route::post('requests/{request}/reply', [AdminServiceRequestController::class, 'reply'])->name('requests.reply');
         });
     });
 });

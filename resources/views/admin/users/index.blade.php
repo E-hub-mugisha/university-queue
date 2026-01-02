@@ -1,7 +1,5 @@
-<!-- resources/views/admin/users/index.blade.php -->
-
 @extends('layouts.app')
-
+@section('title', 'User Management')
 @section('content')
 <div class="container">
     <h2>User Management</h2>

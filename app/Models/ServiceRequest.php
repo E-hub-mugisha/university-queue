@@ -54,4 +54,8 @@ class ServiceRequest extends Model
     {
         return $this->belongsTo(Student::class);
     }
+    public function replies()
+    {
+        return $this->hasMany(ServiceRequestReply::class)->latest();
+    }
 }
