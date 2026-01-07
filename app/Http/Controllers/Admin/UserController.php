@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -58,5 +60,33 @@ class UserController extends Controller
     {
         $user->delete();
         return redirect()->back()->with('success', 'User deleted successfully.');
+    }
+    public function toggleStatus(User $user)
+    {
+        $user->update([
+            'is_active' => !$user->is_active
+        ]);
+
+        return back()->with('success', 'User status updated successfully.');
+    }
+
+    public function resetPassword(User $user)
+    {
+        $newPassword = Str::random(10);
+
+        $user->update([
+            'password' => Hash::make($newPassword)
+        ]);
+
+        // Optional: email the new password
+        Mail::raw(
+            "Your password has been reset.\nNew Password: $newPassword",
+            function ($message) use ($user) {
+                $message->to($user->email)
+                    ->subject('Password Reset');
+            }
+        );
+
+        return back()->with('success', 'Password reset successfully.');
     }
 }

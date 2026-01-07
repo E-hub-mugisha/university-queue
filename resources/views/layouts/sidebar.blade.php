@@ -1,0 +1,162 @@
+<?php
+
+if (!function_exists('activeClass')) {
+    function activeClass($routeNames, $class = 'active')
+    {
+        if (is_array($routeNames)) {
+            foreach ($routeNames as $route) {
+                if (request()->routeIs($route)) {
+                    return $class;
+                }
+            }
+        } else {
+            if (request()->routeIs($routeNames)) {
+                return $class;
+            }
+        }
+
+        return '';
+    }
+}
+?>
+
+<style>
+    .nav-link.active {
+        background-color: #435ebe;
+        color: #fff !important;
+        border-radius: 6px;
+    }
+
+    .nav-link.active i {
+        color: #fff;
+    }
+</style>
+
+@php $role = Auth::user()->role; @endphp
+
+<div class="nk-sidebar nk-sidebar-fixed is-dark " data-content="sidebarMenu">
+    <div class="nk-sidebar-element nk-sidebar-head">
+        <div class="nk-menu-trigger"><a href="#" class="nk-nav-toggle nk-quick-nav-icon d-xl-none"
+                data-target="sidebarMenu"><em class="icon ni ni-arrow-left"></em></a><a href="#"
+                class="nk-nav-compact nk-quick-nav-icon d-none d-xl-inline-flex" data-target="sidebarMenu"><em
+                    class="icon ni ni-menu"></em></a></div>
+        <div class="nk-sidebar-brand"><a href="#" class="logo-link nk-sidebar-logo"><img
+                    class="logo-light logo-img" src="images/logo.png" srcset="/demo1/images/logo2x.png 2x"
+                    alt="logo"><img class="logo-dark logo-img" src="images/logo-dark.png"
+                    srcset="/demo1/images/logo-dark2x.png 2x" alt="logo-dark"></a></div>
+    </div>
+    <div class="nk-sidebar-element nk-sidebar-body">
+        <div class="nk-sidebar-content">
+            <div class="nk-sidebar-menu" data-simplebar>
+                <ul class="nk-menu">
+                    <li class="nk-menu-heading">
+                        <h6 class="overline-title text-primary-alt">Use-Case Preview</h6>
+                    </li>
+                    <li class="nk-menu-item">
+                        <a href="{{ route('dashboard') }}" class="nk-menu-link {{ activeClass('dashboard') }}">
+                            <span class="nk-menu-icon"><em class="icon ni ni-user-list"></em></span>
+                            <span class="nk-menu-text">Dashboard</span>
+                        </a>
+                    </li>
+                    {{-- Admin-only menus --}}
+                    @if($role === 'admin')
+                    <li class="nk-menu-item"><a href="{{ route('admin.users.index') }}" class="nk-menu-link {{ activeClass('admin.users.*') }}"><span
+                                class="nk-menu-icon"><em class="icon ni ni-building"></em></span><span
+                                class="nk-menu-text">Users</span></a>
+                    </li>
+
+                    <li class="nk-menu-item">
+                        <a href="{{ route('admin.departments.index') }}" class="nk-menu-link {{ activeClass('admin.departments.*') }}">
+                            <span class="nk-menu-icon"><em class="icon ni ni-building"></em></span>
+                            <span class="nk-menu-text">Departments</span>
+                        </a>
+                    </li>
+                    <li class="nk-menu-item">
+                        <a href="{{ route('admin.faculties.index') }}" class="nk-menu-link {{ activeClass('admin.faculties.*') }}">
+                            <span class="nk-menu-icon"><em class="icon ni ni-mortarboard"></em></span>
+                            <span class="nk-menu-text">Faculties</span>
+                        </a>
+                    </li>
+                    <li class="nk-menu-item">
+                        <a href="{{ route('admin.staff.index') }}" class="nk-menu-link {{ activeClass('admin.staff.*') }}">
+                            <span class="nk-menu-icon"><em class="icon ni ni-person"></em></span>
+                            <span class="nk-menu-text">Staff</span>
+                        </a>
+                    </li>
+                    <li class="nk-menu-item">
+                        <a href="{{ route('admin.students.index') }}" class="nk-menu-link {{ activeClass('admin.students.*') }}">
+                            <span class="nk-menu-icon"><em class="icon ni ni-person-lines"></em></span>
+                            <span class="nk-menu-text">Students</span>
+                        </a>
+                    </li>
+                    <li class="nk-menu-item">
+                        <a href="{{ route('admin.requests.index') }}" class="nk-menu-link {{ activeClass('admin.requests.*') }}">
+                            <span class="nk-menu-icon"><em class="icon ni ni-list-check"></em></span>
+                            <span class="nk-menu-text">All Requests</span>
+                        </a>
+                    </li>
+                    <li class="nk-menu-item">
+                        <a href="{{ route('admin.appointments.index') }}" class="nk-menu-link {{ activeClass('admin.appointments.*') }}">
+                            <span class="nk-menu-icon"><em class="icon ni ni-calendar-check"></em></span>
+                            <span class="nk-menu-text">Appointments</span>
+                        </a>
+                    </li>
+                    <li class="nk-menu-item">
+                        <a href="{{ route('admin.faqs.index') }}" class="nk-menu-link {{ activeClass('admin.faqs.*') }}">
+                            <span class="nk-menu-icon"><em class="icon ni ni-help-circle"></em></span>
+                            <span class="nk-menu-text">FAQs</span>
+                        </a>
+                    </li>
+                    @endif
+
+                    {{-- Staff menus --}}
+                    @if($role === 'staff')
+                    <li class="nk-menu-item">
+                        <a href="{{ route('staff.requests.index') }}" class="nk-menu-link {{ activeClass('staff.requests.*') }}">
+                            <span class="nk-menu-icon"><em class="icon ni ni-list-check"></em></span>
+                            <span class="nk-menu-text">Assigned Requests</span>
+                        </a>
+                    </li>
+                    <!-- appointment -->
+                    <li class="nk-menu-item">
+                        <a href="{{ route('staff.appointments.index') }}" class="nk-menu-link {{ activeClass('staff.appointments.*') }}">
+                            <span class="nk-menu-icon"><em class="icon ni ni-calendar-check"></em></span>
+                            <span class="nk-menu-text">Appointments</span>
+                        </a>
+                    </li>
+                    @endif
+
+                    {{-- Student menus --}}
+                    @if($role === 'student')
+                    <!-- frequent asked questions -->
+                    <li class="nk-menu-item">
+                        <a href="{{ route('student.faq.index') }}" class="nk-menu-link {{ activeClass('student.faq.*') }}">
+                            <span class="nk-menu-icon"><em class="icon ni ni-help-circle"></em></span>
+                            <span class="nk-menu-text">FAQ</span>
+                        </a>
+                    </li>
+                    <li class="nk-menu-item">
+                        <a href="{{ route('student.requests.index') }}" class="nk-menu-link {{ activeClass('student.requests.*') }}">
+                            <span class="nk-menu-icon"><em class="icon ni ni-list-check"></em></span>
+                            <span class="nk-menu-text">My Requests</span>
+                        </a>
+                    </li>
+                    <li class="nk-menu-item">
+                        <a href="{{ route('student.requests.create') }}" class="nk-menu-link {{ activeClass('student.requests.*') }}">
+                            <span class="nk-menu-icon"><em class="icon ni ni-plus-circle"></em></span>
+                            <span class="nk-menu-text">Submit Request</span>
+                        </a>
+                    </li>
+                    <li class="nk-menu-item">
+                        <a href="{{ route('student.appointments.index') }}" class="nk-menu-link {{ activeClass('student.appointments.*') }}">
+                            <span class="nk-menu-icon"><em class="icon ni ni-calendar-check"></em></span>
+                            <span class="nk-menu-text">My Appointments</span>
+                        </a>
+                    </li>
+                    @endif
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,159 +1,74 @@
-<?php
+<div class="nk-header nk-header-fixed is-light">
+    <div class="container-fluid">
+        <div class="nk-header-wrap">
+            <div class="nk-menu-trigger d-xl-none ms-n1"><a href="#"
+                    class="nk-nav-toggle nk-quick-nav-icon" data-target="sidebarMenu"><em
+                        class="icon ni ni-menu"></em></a></div>
+            <div class="nk-header-brand d-xl-none"><a href="#" class="logo-link"><img
+                        class="logo-light logo-img" src="images/logo.png"
+                        srcset="/demo1/images/logo2x.png 2x" alt="logo"><img class="logo-dark logo-img"
+                        src="images/logo-dark.png" srcset="/demo1/images/logo-dark2x.png 2x"
+                        alt="logo-dark"></a></div>
+            <div class="nk-header-news d-none d-xl-block">
+                <div class="nk-news-list"><a class="nk-news-item" href="#">
+                        <div class="nk-news-icon"><em class="icon ni ni-card-view"></em></div>
+                        <div class="nk-news-text">
 
-if (!function_exists('activeClass')) {
-    function activeClass($routeNames, $class = 'active')
-    {
-        if (is_array($routeNames)) {
-            foreach ($routeNames as $route) {
-                if (request()->routeIs($route)) {
-                    return $class;
-                }
-            }
-        } else {
-            if (request()->routeIs($routeNames)) {
-                return $class;
-            }
-        }
-
-        return '';
-    }
-}
-?>
-
-<style>
-    .nav-link.active {
-        background-color: #435ebe;
-        color: #fff !important;
-        border-radius: 6px;
-    }
-
-    .nav-link.active i {
-        color: #fff;
-    }
-</style>
-
-<header class="mb-5">
-    <div class="header-top bg-light py-2 shadow-sm">
-        <div class="container d-flex justify-content-between align-items-center">
-
-            <!-- Logo -->
-            <div class="logo">
-                <a href="{{ route('dashboard') }}">
-                    <img src="{{ asset('assets/logo.svg') }}" alt="Logo" height="40">
-                </a>
+                        </div>
+                    </a></div>
             </div>
+            <div class="nk-header-tools">
+                <ul class="nk-quick-nav">
 
-            <!-- Main Navbar -->
-            <nav class="main-navbar shadow-sm">
-                <div class="container">
-                    <ul class="nav">
-
-                        {{-- Dashboard - visible to all --}}
-                        <li class="nav-item">
-                            <a href="{{ route('dashboard') }}" class="nav-link {{ activeClass('dashboard') }}">
-                                <i class="bi bi-grid-fill me-1"></i> Dashboard
-                            </a>
-                        </li>
-
-                        @php $role = Auth::user()->role; @endphp
-
-                        {{-- Admin-only menus --}}
-                        @if($role === 'admin')
-                        <li class="nav-item">
-                            <a href="{{ route('admin.users.index') }}" class="nav-link {{ activeClass('admin.users.*') }}">
-                                <i class="bi bi-people-fill me-1"></i> Users
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.departments.index') }}" class="nav-link {{ activeClass('admin.departments.*') }}">
-                                <i class="bi bi-building me-1"></i> Departments
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.faculties.index') }}" class="nav-link {{ activeClass('admin.faculties.*') }}">
-                                <i class="bi bi-mortarboard-fill me-1"></i> Faculties
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.staff.index') }}" class="nav-link {{ activeClass('admin.staff.*') }}">
-                                <i class="bi bi-person-badge-fill me-1"></i> Staff
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.students.index') }}" class="nav-link {{ activeClass('admin.students.*') }}">
-                                <i class="bi bi-person-lines-fill me-1"></i> Students
-                            </a>
-                        </li>
-                        @endif
-
-                        {{-- Staff menus --}}
-                        @if($role === 'staff')
-                        <li class="nav-item">
-                            <a href="{{ route('staff.requests.index') }}" class="nav-link {{ activeClass('staff.requests.*') }}">
-                                <i class="bi bi-list-ul me-1"></i> Assigned Requests
-                            </a>
-                        </li>
-                        @endif
-
-                        {{-- Student menus --}}
-                        @if($role === 'student')
-                        <li class="nav-item">
-                            <a href="{{ route('student.requests.index') }}" class="nav-link {{ activeClass('student.requests.*') }}">
-                                <i class="bi bi-list-check me-1"></i> My Requests
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('student.requests.create') }}" class="nav-link {{ activeClass('student.requests.create') }}">
-                                <i class="bi bi-plus-circle me-1"></i> Submit Request
-                            </a>
-                        </li>
-                        @endif
-
-                    </ul>
-
-                </div>
-            </nav>
-            <!-- User Dropdown + Burger -->
-            <div class="d-flex align-items-center">
-
-                <!-- User Dropdown -->
-                <div class="dropdown me-3">
-                    <a href="#" id="userDropdown" class="d-flex align-items-center dropdown-toggle"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <div class="avatar me-2">
-                            <img src="{{ asset('assets/compiled/jpg/1.jpg') }}" alt="Avatar" class="rounded-circle" width="40">
+                    <li class="dropdown user-dropdown"><a href="#" class="dropdown-toggle"
+                            data-bs-toggle="dropdown">
+                            <div class="user-toggle">
+                                <div class="user-avatar sm"><em class="icon ni ni-user-alt"></em></div>
+                                <div class="user-info d-none d-md-block">
+                                    <div class="user-status">{{ Auth::user()->role }}</div>
+                                    <div class="user-name dropdown-indicator">{{ Auth::user()->name }}</div>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-md dropdown-menu-end dropdown-menu-s1">
+                            <div class="dropdown-inner user-card-wrap bg-lighter d-none d-md-block">
+                                <div class="user-card">
+                                    <div class="user-avatar"><span>{{ substr(Auth::user()->name, 0, 2) }}</span></div>
+                                    <div class="user-info"><span class="lead-text">{{ Auth::user()->name }}</span><span
+                                            class="sub-text">{{ Auth::user()->email }}</span></div>
+                                </div>
+                            </div>
+                            <div class="dropdown-inner">
+                                <ul class="link-list">
+                                    <li><a href="#"><em
+                                                class="icon ni ni-user-alt"></em><span>View
+                                                Profile</span></a></li>
+                                    <li><a href="#"><em
+                                                class="icon ni ni-setting-alt"></em><span>Account
+                                                Setting</span></a></li>
+                                    <li><a href="#"><em
+                                                class="icon ni ni-activity-alt"></em><span>Login
+                                                Activity</span></a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown-inner">
+                                <ul class="link-list">
+                                    <li><!-- Proper logout -->
+                                        <a class="dropdown-item" href="{{ route('logout') }}"
+                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                            Logout
+                                        </a>
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                            @csrf
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="text">
-                            <h6 class="mb-0">{{ Auth::user()->name }}</h6>
-                            <small class="text-muted">{{ ucfirst(Auth::user()->role) }}</small>
-                        </div>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item" href="#">My Account</a></li>
-                        <li><a class="dropdown-item" href="#">Settings</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li>
-                            <!-- Proper logout -->
-                            <a class="dropdown-item" href="{{ route('logout') }}"
-                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                Logout
-                            </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
-                        </li>
-                    </ul>
-                </div>
+                    </li>
 
-                <!-- Burger button responsive -->
-                <a href="#" class="burger-btn d-block d-xl-none">
-                    <i class="bi bi-list fs-3"></i>
-                </a>
-
+                </ul>
             </div>
         </div>
     </div>
-
-</header>
+</div>

@@ -21,7 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role'
+        'role',
+        'is_active'
     ];
 
     /**
@@ -47,20 +48,26 @@ class User extends Authenticatable
         ];
     }
     // Role checks
-    public function isAdmin() {
+    public function isAdmin()
+    {
         return $this->role === 'admin';
     }
 
-    public function isStaff() {
+    public function isStaff()
+    {
         return $this->role === 'staff';
     }
 
-    public function isStudent() {
+    public function isStudent()
+    {
         return $this->role === 'student';
     }
     public function student()
-{
-    return $this->hasOne(Student::class);
-}
-
+    {
+        return $this->hasOne(Student::class);
+    }
+    public function staff()
+    {
+        return $this->hasOne(Staff::class);
+    }
 }

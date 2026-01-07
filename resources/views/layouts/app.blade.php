@@ -6,50 +6,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', config('app.name', 'Laravel'))</title>
+    <title>@yield('title', config('app.name', 'University Queue'))</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-    <link rel="stylesheet" crossorigin href="{{ asset('assets/compiled/css/app.css') }}">
-    <!-- <link rel="stylesheet" crossorigin href="{{ asset('assets/compiled/css/app-dark.css') }}"> -->
-    <link rel="stylesheet" crossorigin href="{{ asset('assets/compiled/css/iconly.css') }}">
-    <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="{{ asset('assets/css/dashlitee1e3.css?ver=3.2.4') }}">
+    <link id="skin-default" rel="stylesheet" href="{{ asset('assets/css/themee1e3.css?ver=3.2.4') }}">
+
 </head>
 
-<body class="font-sans antialiased">
-    
-    <div id="app">
-        
-        @include('layouts.header')
+<body class="nk-body bg-lighter npc-general has-sidebar ">
+    <div class="nk-app-root">
+        <div class="nk-main ">
+            @include('layouts.sidebar')
+            <div class="nk-wrap ">
+                @include('layouts.header')
 
-        <!-- Page Content -->
-        <main>
-            @yield('content')
-        </main>
+                <!-- Page Content -->
+                <div class="nk-content ">
+                    @yield('content')
+                </div>
 
-        <footer>
-            <div class="container">
-                <div class="footer clearfix mb-0 text-muted">
-                    <div class="float-start">
-                        <p>2025 &copy; {{ config('app.name', 'Laravel') }}</p>
-                    </div>
-                    <div class="float-end">
-                        <p>Crafted with <span class="text-danger"><i class="bi bi-heart"></i></span> by <a
-                                href="https://saugi.me/">Saugi</a></p>
+                <div class="nk-footer">
+                    <div class="container-fluid">
+                        <div class="nk-footer-wrap">
+                            <div class="nk-footer-copyright"> &copy; {{ date('Y') }} <a
+                                    href="#" target="_blank">{{ config('app.name', 'University Queue') }}</a></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </footer>
+        </div>
     </div>
-
-    <!-- <script src="{{ asset('assets/static/js/components/dark.js') }}"></script> -->
-    <script src="{{ asset('assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
-
-
-    <script src="{{ asset('assets/compiled/js/app.js') }}"></script>
+    <script src="{{ asset('assets/js/bundlee1e3.js?ver=3.2.4') }}"></script>
+    <script src="{{ asset('assets/js/scriptse1e3.js?ver=3.2.4') }}"></script>
+    <script src="{{ asset('assets/js/demo-settingse1e3.js?ver=3.2.4') }}"></script>
+    <script src="{{ asset('assets/js/charts/gd-defaulte1e3.js?ver=3.2.4') }}"></script>
 </body>
 
 </html>

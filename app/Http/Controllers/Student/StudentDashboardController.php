@@ -7,5 +7,8 @@ use Illuminate\Http\Request;
 
 class StudentDashboardController extends Controller
 {
-    //
+    public function faq()
+    {
+        return view('student.faq.index');
+    }
 }

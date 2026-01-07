@@ -48,4 +48,10 @@ class Staff extends Model
     {
         return $this->belongsTo(Faculty::class);
     }
+
+    // Link to appointments
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
+    }
 }

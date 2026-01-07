@@ -12,5 +12,16 @@ class Appointment extends Model
         'appointment_time',
         'location',
         'status',
+        'staff_id',
     ];
+
+    public function serviceRequest()
+    {
+        return $this->belongsTo(ServiceRequest::class);
+    }
+
+    public function staff()
+    {
+        return $this->belongsTo(Staff::class);
+    }
 }

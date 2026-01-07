@@ -19,6 +19,7 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>Role</th>
+                <th>Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -29,13 +30,31 @@
                 <td>{{ $user->email }}</td>
                 <td>{{ ucfirst($user->role) }}</td>
                 <td>
+                    @if(!$user->is_active)
+                    <span class="badge bg-danger">Disabled</span>
+                    @else
+                    <span class="badge bg-success">Active</span>
+                    @endif
+                </td>
+                <td>
                     <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#userModal"
                         onclick="editUser({{ $user->id }}, '{{ $user->name }}', '{{ $user->email }}', '{{ $user->role }}')">Edit</button>
+                    <!-- Disable / Enable -->
+                    <button class="btn btn-sm {{ $user->is_active ? 'btn-warning' : 'btn-success' }}"
+                        data-bs-toggle="modal"
+                        data-bs-target="#statusModal{{ $user->id }}">
+                        <i class="bi {{ $user->is_active ? 'bi-person-x' : 'bi-person-check' }}"></i>
+                        {{ $user->is_active ? 'Disable' : 'Enable' }}
+                    </button>
 
-                    <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="d-inline">
-                        @csrf @method('DELETE')
-                        <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this user?')">Delete</button>
-                    </form>
+                    <!-- Reset Password -->
+                    <button class="btn btn-sm btn-danger"
+                        data-bs-toggle="modal"
+                        data-bs-target="#resetModal{{ $user->id }}">
+                        <i class="bi bi-key"></i>Rest Password
+                    </button>
+                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $user->id }}">Delete</button>
+
                 </td>
             </tr>
             @endforeach
@@ -43,6 +62,96 @@
     </table>
 </div>
 
+@foreach($users as $user)
+<div class="modal fade" id="statusModal{{ $user->id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    {{ $user->is_active ? 'Disable' : 'Enable' }} User
+                </h5>
+            </div>
+
+            <div class="modal-body">
+                Are you sure you want to
+                <strong>{{ $user->is_active ? 'disable' : 'enable' }}</strong>
+                {{ $user->name }}?
+            </div>
+
+            <div class="modal-footer">
+                <form method="POST"
+                    action="{{ route('admin.users.toggle-status', $user) }}">
+                    @csrf
+                    @method('PATCH')
+
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn {{ $user->is_active ? 'btn-warning' : 'btn-success' }}">
+                        Confirm
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="resetModal{{ $user->id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Reset Password</h5>
+            </div>
+
+            <div class="modal-body">
+                Reset password for <strong>{{ $user->email }}</strong>?
+                A new password will be emailed to the user.
+            </div>
+
+            <div class="modal-footer">
+                <form method="POST"
+                    action="{{ route('admin.users.reset-password', $user) }}">
+                    @csrf
+
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-danger">
+                        Reset Password
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal{{ $user->id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Delete User</h5>
+            </div>
+
+            <div class="modal-body">
+                Are you sure you want to delete user <strong>{{ $user->name }}</strong>? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <form method="POST"
+                    action="{{ route('admin.users.destroy', $user) }}">
+                    @csrf
+                    @method('DELETE')
+
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-danger">
+                        Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
 <!-- User Modal -->
 <div class="modal fade" id="userModal" tabindex="-1">
     <div class="modal-dialog">

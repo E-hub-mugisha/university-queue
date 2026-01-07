@@ -5,11 +5,13 @@ use App\Http\Controllers\Admin\AppointmentController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\FacultyController;
+use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Staff\StaffDashboardController;
+use App\Http\Controllers\Staff\StaffRequestController;
 use App\Http\Controllers\Student\ServiceRequestController;
 use App\Http\Controllers\Student\StudentDashboardController;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +33,13 @@ Route::get('/api/service-types/{department}', function ($departmentId) {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::middleware(['auth'])->group(function () {
+        Route::get(
+            '/appointments/{appointment}',
+            [AppointmentController::class, 'show']
+        )->name('appointments.show');
+    });
     // Student routes
     Route::middleware('role:student')->group(function () {
         Route::get('/student/dashboard', [StudentDashboardController::class, 'dashboard']);
@@ -40,12 +49,41 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('requests/create', [ServiceRequestController::class, 'create'])->name('requests.create');
             Route::post('requests', [ServiceRequestController::class, 'store'])->name('requests.store');
             Route::get('requests/{request}', [ServiceRequestController::class, 'show'])->name('requests.show');
+
+            Route::get('appointments', [AppointmentController::class, 'studentIndex'])->name('appointments.index');
+            Route::patch('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+            Route::get('appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
+
+            // FAQ routes
+            Route::get('faq', [FaqController::class, 'faq'])->name('faq.index');
         });
     });
 
     // Staff routes
     Route::middleware('role:staff')->group(function () {
         Route::get('/staff/dashboard', [StaffDashboardController::class, 'dashboard']);
+        Route::prefix('staff')->name('staff.')->group(function () {
+            // Define staff-specific routes here
+            Route::get('requests', [StaffRequestController::class, 'index'])->name('requests.index');
+            Route::get('requests/{request}', [StaffRequestController::class, 'show'])
+                ->name('requests.show');
+
+            Route::post('requests/{request}/reply', [StaffRequestController::class, 'reply'])
+                ->name('requests.reply');
+
+            Route::post('requests/{request}/status', [StaffRequestController::class, 'updateStatus'])
+                ->name('requests.status');
+
+            Route::put('requests/{request}', [StaffRequestController::class, 'update'])->name('requests.update');
+            Route::delete('requests/{request}', [StaffRequestController::class, 'destroy'])->name('requests.destroy');
+            Route::post('requests/{request}/reply', [StaffRequestController::class, 'reply'])->name('requests.reply');
+
+            Route::get('appointments', [AppointmentController::class, 'staffIndex'])->name('appointments.index');
+            Route::get('appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
+            Route::post('appointments/{appointment}/update', [AppointmentController::class, 'update'])->name('appointments.update');
+            Route::post('requests/{serviceRequest}/appointment', [AppointmentController::class, 'store'])->name('appointments.store');
+            Route::patch('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+        });
     });
 
     // Admin routes
@@ -57,6 +95,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('users', [UserController::class, 'store'])->name('users.store');
             Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
             Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+            Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+            Route::post('users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
         });
 
         Route::prefix('admin')->name('admin.')->group(function () {
@@ -97,6 +137,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('requests/{request}/reply', [AdminServiceRequestController::class, 'reply'])->name('requests.reply');
 
             Route::post('requests/{serviceRequest}/appointment', [AppointmentController::class, 'store'])->name('appointments.store');
+        });
+
+        Route::prefix('admin')->name('admin.')->group(function () {
+            Route::get('appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+            Route::get('appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
+            Route::patch('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+        });
+
+        Route::prefix('admin')->name('admin.')->group(function () {
+            Route::get('faqs', [FaqController::class, 'index'])->name('faqs.index');
+            Route::patch('faqs/{faq}/toggle', [FaqController::class, 'toggle'])->name('faqs.toggle');
         });
     });
 });
