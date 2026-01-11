@@ -69,9 +69,9 @@
         </div>
     </div>
 </div>
-@endsection
 
-@section('scripts')
+
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     // Requests by Department

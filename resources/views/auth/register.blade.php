@@ -74,7 +74,10 @@
 
                         <!-- LEFT -->
                         <div class="col-md-5 register-left d-flex flex-column justify-content-center">
-                            <h2>Create Account</h2>
+                            <a class="navbar-brand fw-bold" href="#">
+                                <i class="bi bi-stack me-2"></i> {{ config('app.name', 'Digital Queue') }}
+                            </a>
+                            <h3 class="mt-3">Create Account</h3>
                             <p class="mb-4">
                                 Join the Digital Queue System to submit requests,
                                 book appointments, and track service progress.
@@ -114,16 +117,6 @@
                                 <div class="mb-3">
                                     <label class="form-label">Email Address</label>
                                     <input type="email" name="email" class="form-control" required>
-                                </div>
-
-                                <!-- Role -->
-                                <div class="mb-3">
-                                    <label class="form-label">Register As</label>
-                                    <select name="role" class="form-select" required>
-                                        <option value="">Select role</option>
-                                        <option value="student">Student</option>
-                                        <option value="staff">Staff</option>
-                                    </select>
                                 </div>
 
                                 <!-- Password -->

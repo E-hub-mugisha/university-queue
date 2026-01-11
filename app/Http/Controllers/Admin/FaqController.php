@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Department;
 use App\Models\Faq;
 use Illuminate\Http\Request;
 
@@ -11,7 +12,8 @@ class FaqController extends Controller
     public function index()
     {
         $faqs = Faq::with('department')->latest()->paginate(10);
-        return view('admin.faqs.index', compact('faqs'));
+        $departments = Department::all();
+        return view('admin.faqs.index', compact('faqs', 'departments'));
     }
 
     public function store(Request $request)
@@ -58,6 +60,6 @@ class FaqController extends Controller
             ->orderBy('department_id')
             ->get();
 
-        return view('student.faqs.index', compact('faqs'));
+        return view('student.faq.index', compact('faqs'));
     }
 }

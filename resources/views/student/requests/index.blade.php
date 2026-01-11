@@ -18,7 +18,7 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <table class="table table-bordered table-striped align-middle">
-                <thead class="table-dark">
+                <thead>
                     <tr>
                         <th>#</th>
                         <th>Request No</th>

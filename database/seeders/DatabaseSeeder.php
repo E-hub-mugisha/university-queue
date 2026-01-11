@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             StaffSeeder::class,
             StudentSeeder::class,
             ServiceTypeSeeder::class,
+            FaqSeeder::class,
         ]);
     }
 }

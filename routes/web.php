@@ -17,7 +17,7 @@ use App\Http\Controllers\Student\StudentDashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
@@ -84,6 +84,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('requests/{serviceRequest}/appointment', [AppointmentController::class, 'store'])->name('appointments.store');
             Route::patch('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
         });
+
+        Route::prefix('staff')->name('staff.')->group(function () {
+            Route::get('faqs', [FaqController::class, 'index'])->name('faqs.index');
+            Route::patch('faqs/{faq}/toggle', [FaqController::class, 'toggle'])->name('faqs.toggle');
+            Route::post('faqs', [FaqController::class, 'store'])->name('faqs.store');
+            Route::put('faqs/{faq}', [FaqController::class, 'update'])->name('faqs.update');
+            Route::delete('faqs/{faq}', [FaqController::class, 'destroy'])->name('faqs.destroy');
+        });
     });
 
     // Admin routes
@@ -148,6 +156,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('faqs', [FaqController::class, 'index'])->name('faqs.index');
             Route::patch('faqs/{faq}/toggle', [FaqController::class, 'toggle'])->name('faqs.toggle');
+            Route::post('faqs', [FaqController::class, 'store'])->name('faqs.store');
+            Route::put('faqs/{faq}', [FaqController::class, 'update'])->name('faqs.update');
+            Route::delete('faqs/{faq}', [FaqController::class, 'destroy'])->name('faqs.destroy');
         });
     });
 });
