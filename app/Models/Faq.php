@@ -9,12 +9,12 @@ class Faq extends Model
     protected $fillable = [
         'question',
         'answer',
-        'department_id',
+        'office_id',
         'is_active',
     ];
 
-    public function department()
+    public function office()
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Office::class);
     }
 }

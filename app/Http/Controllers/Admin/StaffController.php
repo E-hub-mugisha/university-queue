@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Department;
-use App\Models\Faculty;
+use App\Models\Office;
 use App\Models\Staff;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -14,10 +13,9 @@ class StaffController extends Controller
 {
     public function index()
     {
-        $staffs = Staff::with('user', 'department', 'faculty')->get();
-        $departments = Department::all();
-        $faculties = Faculty::all();
-        return view('admin.staff.index', compact('staffs', 'departments', 'faculties'));
+        $staffs = Staff::with('user', 'office')->get();
+        $offices = Office::all();
+        return view('admin.staff.index', compact('staffs', 'offices'));
     }
 
     public function store(Request $request)
@@ -26,8 +24,7 @@ class StaffController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
-            'department_id' => 'nullable|exists:departments,id',
-            'faculty_id' => 'nullable|exists:faculties,id',
+            'office_id' => 'nullable|exists:offices,id',
             'position' => 'nullable|string',
             'phone' => 'nullable|string',
         ]);
@@ -43,8 +40,7 @@ class StaffController extends Controller
         // Create staff record
         Staff::create([
             'user_id' => $user->id,
-            'department_id' => $request->department_id,
-            'faculty_id' => $request->faculty_id,
+            'office_id' => $request->office_id,
             'position' => $request->position,
             'phone' => $request->phone,
         ]);
@@ -58,8 +54,7 @@ class StaffController extends Controller
             'name' => 'required|string|max:255',
             'email' => "required|email|unique:users,email,{$staff->user_id}",
             'password' => 'nullable|string|min:6|confirmed',
-            'department_id' => 'nullable|exists:departments,id',
-            'faculty_id' => 'nullable|exists:faculties,id',
+            'office_id' => 'nullable|exists:offices,id',
             'position' => 'nullable|string',
             'phone' => 'nullable|string',
         ]);
@@ -75,8 +70,7 @@ class StaffController extends Controller
 
         // Update staff details
         $staff->update([
-            'department_id' => $request->department_id,
-            'faculty_id' => $request->faculty_id,
+            'office_id' => $request->office_id,
             'position' => $request->position,
             'phone' => $request->phone,
         ]);

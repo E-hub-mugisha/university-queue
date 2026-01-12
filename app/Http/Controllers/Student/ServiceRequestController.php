@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use App\Models\Department;
+use App\Mail\RequestRepliedMail;
+use App\Models\Office;
 use App\Models\RequestAttachment;
 use App\Models\ServiceRequest;
+use App\Models\ServiceRequestReply;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class ServiceRequestController extends Controller
 {
@@ -19,7 +22,7 @@ class ServiceRequestController extends Controller
             return back()->with('error', 'Student profile not found.');
         }
 
-        $requests = ServiceRequest::with(['department', 'serviceType'])
+        $requests = ServiceRequest::with(['office', 'serviceType'])
             ->where('student_id', $student->id)
             ->latest()
             ->paginate(10);
@@ -29,14 +32,14 @@ class ServiceRequestController extends Controller
 
     public function create()
     {
-        $departments = Department::with('serviceTypes')->get();
-        return view('student.requests.create', compact('departments'));
+        $offices = Office::with('serviceTypes')->get();
+        return view('student.requests.create', compact('offices'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'department_id' => 'required|exists:departments,id',
+            'office_id' => 'required|exists:offices,id',
             'service_type_id' => 'required|exists:service_types,id',
             'description' => 'nullable|string',
             'attachments.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:5120'
@@ -46,7 +49,7 @@ class ServiceRequestController extends Controller
 
         $serviceRequest = ServiceRequest::create([
             'student_id' => $studentId,
-            'department_id' => $request->department_id,
+            'office_id' => $request->office_id,
             'service_type_id' => $request->service_type_id,
             'description' => $request->description,
             'status' => 'Submitted',
@@ -72,8 +75,40 @@ class ServiceRequestController extends Controller
     public function show(ServiceRequest $request)
     {
 
-        $request->load(['department', 'serviceType', 'attachments', 'replies']);
+        $request->load(['office', 'serviceType', 'attachments', 'replies']);
 
         return view('student.requests.show', compact('request'));
+    }
+
+    // Reply to request
+    public function reply(Request $r, ServiceRequest $request)
+    {
+        $r->validate([
+            'message' => 'required|string',
+            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx',
+            'status' => 'required|in:Submitted,In Review,Resolved,Closed'
+        ]);
+
+        $filePath = null;
+        if ($r->hasFile('attachment')) {
+            $filePath = $r->file('attachment')->store('request_replies', 'public');
+        }
+
+        // Save reply
+        $reply = new ServiceRequestReply();
+        $reply->service_request_id = $request->id;
+        $reply->user_id = auth()->id();
+        $reply->message = $r->message;
+        $reply->attachment = $filePath;
+        $reply->save();
+
+        // Update request status
+        $request->status = $r->status;
+        $request->save();
+
+        Mail::to($request->student->user->email)
+            ->send(new RequestRepliedMail($request));
+
+        return back()->with('success', 'Reply sent successfully.');
     }
 }

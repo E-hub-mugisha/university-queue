@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', config('app.name', 'University Queue'))</title>
+    <title>@yield('title') - {{ config('app.name', 'University Queue') }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -44,6 +44,7 @@
     <script src="{{ asset('assets/js/scriptse1e3.js?ver=3.2.4') }}"></script>
     <script src="{{ asset('assets/js/demo-settingse1e3.js?ver=3.2.4') }}"></script>
     <script src="{{ asset('assets/js/charts/gd-defaulte1e3.js?ver=3.2.4') }}"></script>
+    <script src="{{ asset('assets/js/libs/datatable-btnse1e3.js?ver=3.2.4') }}"></script>
 </body>
 
 </html>

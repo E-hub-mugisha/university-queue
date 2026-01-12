@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Department;
-use App\Models\Faculty;
+use App\Models\Office;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -13,20 +12,17 @@ class StudentController extends Controller
 {
     public function index()
     {
-        $students = Student::with(['user','department','faculty'])->get();
+        $students = Student::with(['user'])->get();
         $users = User::where('role', 'student')->get();
-        $departments = Department::all();
-        $faculties = Faculty::all();
+        $offices = Office::all();
 
-        return view('admin.students.index', compact('students', 'users', 'departments', 'faculties'));
+        return view('admin.students.index', compact('students', 'users', 'offices'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'user_id' => 'required|exists:users,id|unique:students,user_id',
-            'department_id' => 'nullable|exists:departments,id',
-            'faculty_id' => 'nullable|exists:faculties,id',
             'program' => 'nullable|string',
             'level' => 'nullable|string',
             'phone' => 'nullable|string',
@@ -40,8 +36,6 @@ class StudentController extends Controller
     public function update(Request $request, Student $student)
     {
         $request->validate([
-            'department_id' => 'nullable|exists:departments,id',
-            'faculty_id' => 'nullable|exists:faculties,id',
             'program' => 'nullable|string',
             'level' => 'nullable|string',
             'phone' => 'nullable|string',
@@ -54,7 +48,7 @@ class StudentController extends Controller
 
     public function destroy(Student $student)
     {
-        $student->delete();
+        $student->user->delete();
         return back()->with('success', 'Student deleted successfully.');
     }
 }

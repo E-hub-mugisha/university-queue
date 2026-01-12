@@ -10,7 +10,7 @@ class ServiceRequest extends Model
     protected $fillable = [
         'request_number',
         'student_id',
-        'department_id',
+        'office_id',
         'service_type_id',
         'description',
         'status'
@@ -41,9 +41,9 @@ class ServiceRequest extends Model
         return $this->hasMany(RequestAttachment::class);
     }
 
-    public function department()
+    public function office()
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Office::class);
     }
 
     public function serviceType()

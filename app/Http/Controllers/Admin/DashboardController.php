@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Models\Student;
 use App\Models\Staff;
 use App\Models\ServiceRequest;
-use App\Models\Department;
+use App\Models\Office;
 use App\Models\Faculty;
 class DashboardController extends Controller
 {
@@ -22,8 +22,8 @@ class DashboardController extends Controller
         $resolvedRequests = ServiceRequest::where('status', 'Resolved')->count();
         $appointmentRequired = ServiceRequest::where('status', 'Appointment Required')->count();
 
-        // Graph data - requests per department
-        $requestsPerDepartment = Department::withCount('requests')->get();
+        // Graph data - requests per office
+        $requestsPerOffice = Office::withCount('requests')->get();
 
         // Graph data - requests per status
         $requestsPerStatus = ServiceRequest::selectRaw('status, COUNT(*) as count')
@@ -35,7 +35,7 @@ class DashboardController extends Controller
             'pendingRequests',
             'resolvedRequests',
             'appointmentRequired',
-            'requestsPerDepartment',
+            'requestsPerOffice',
             'requestsPerStatus'
         ));
     }

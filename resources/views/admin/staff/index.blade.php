@@ -1,53 +1,84 @@
-<!-- resources/views/admin/staff/index.blade.php -->
-
 @extends('layouts.app')
-
+@section('title', 'Staff Management')
 @section('content')
-<div class="container">
-    <h2>Staff Management</h2>
 
-    @if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+<div class="container-fluid">
+    <div class="nk-content-inner">
+        <div class="nk-content-body">
 
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#staffModal" onclick="resetForm()">Add Staff</button>
+            <div class="nk-block nk-block-lg">
+                <div class="nk-block-head">
+                    <div class="nk-block-head-content">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="nk-block-title">Staff Management</h4>
+                            <div class="d-flex gap-2">
+                                @if(session('success'))
+                                <div class="alert alert-success">{{ session('success') }}</div>
+                                @endif
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Department</th>
-                <th>Faculty</th>
-                <th>Position</th>
-                <th>Phone</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($staffs as $staff)
-            <tr>
-                <td>{{ $staff->user->name }}</td>
-                <td>{{ $staff->user->email }}</td>
-                <td>{{ $staff->department?->name }}</td>
-                <td>{{ $staff->faculty?->name }}</td>
-                <td>{{ $staff->position }}</td>
-                <td>{{ $staff->phone }}</td>
-                <td>
-                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#staffModal"
-                        onclick="editStaff({{ $staff->id }}, '{{ $staff->user->name }}', '{{ $staff->user->email }}', '{{ $staff->department_id }}', '{{ $staff->faculty_id }}', '{{ $staff->position }}', '{{ $staff->phone }}')">Edit</button>
+                                <button class="btn btn-primary mb-3 p-3" data-bs-toggle="modal" data-bs-target="#staffModal" onclick="resetForm()">Add Staff</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Offices Table -->
+                <div class="card card-bordered card-preview">
+                    <div class="card-inner">
+                        <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                            <thead>
+                                <tr class="nk-tb-item nk-tb-head">
+                                    <th class="nk-tb-col">Name</th>
+                                    <th class="nk-tb-col">Email</th>
+                                    <th class="nk-tb-col">Office</th>
+                                    <th class="nk-tb-col">Position</th>
+                                    <th class="nk-tb-col">Phone</th>
+                                    <th class="nk-tb-col nk-tb-col-tools text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($staffs as $staff)
+                                <tr class="nk-tb-item">
+                                    <td class="nk-tb-col">{{ $staff->user->name }}</td>
+                                    <td class="nk-tb-col">{{ $staff->user->email }}</td>
+                                    <td class="nk-tb-col">{{ $staff->office?->name }}</td>
+                                    <td class="nk-tb-col">{{ $staff->position }}</td>
+                                    <td class="nk-tb-col">{{ $staff->phone }}</td>
+                                    <td class="nk-tb-col nk-tb-col-tools">
+                                        <ul class="nk-tb-actions gx-1">
+                                            <li>
+                                                <div class="drodown">
+                                                    <a href="#"
+                                                        class="dropdown-toggle btn btn-icon btn-trigger"
+                                                        data-bs-toggle="dropdown">
+                                                        <em class="icon ni ni-more-h"></em>
+                                                    </a>
+                                                    <div class="dropdown-menu dropdown-menu-end">
+                                                        <ul class="link-list-opt no-bdr">
+                                                            <li>
+                                                                <a role="button" class="text-warning" data-bs-toggle="modal" data-bs-target="#staffModal"
+                                                                    onclick="editStaff({{ $staff->id }}, '{{ $staff->user->name }}', '{{ $staff->user->email }}', '{{ $staff->office_id }}', '{{ $staff->position }}', '{{ $staff->phone }}')">Edit</a>
+                                                            </li>
 
-                    <form action="{{ route('admin.staff.destroy', $staff) }}" method="POST" class="d-inline">
-                        @csrf @method('DELETE')
-                        <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this staff?')">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+                                                            <li>
+                                                                <!-- Delete Staff -->
+                                                                <a role="button" class="text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $staff->id }}">Delete</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
 <!-- Staff Modal -->
 <div class="modal fade" id="staffModal" tabindex="-1">
     <div class="modal-dialog">
@@ -72,21 +103,11 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Department</label>
-                        <select name="department_id" id="department_id" class="form-control">
-                            <option value="">Select Department</option>
-                            @foreach($departments as $department)
-                            <option value="{{ $department->id }}">{{ $department->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Faculty</label>
-                        <select name="faculty_id" id="faculty_id" class="form-control">
-                            <option value="">Select Faculty</option>
-                            @foreach($faculties as $faculty)
-                            <option value="{{ $faculty->id }}">{{ $faculty->name }}</option>
+                        <label>Office</label>
+                        <select name="office_id" id="office_id" class="form-control">
+                            <option value="">Select Office</option>
+                            @foreach($offices as $office)
+                            <option value="{{ $office->id }}">{{ $office->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -128,21 +149,19 @@
         document.getElementById('method').value = 'POST';
         document.getElementById('name').value = '';
         document.getElementById('email').value = '';
-        document.getElementById('department_id').value = '';
-        document.getElementById('faculty_id').value = '';
+        document.getElementById('office_id').value = '';
         document.getElementById('position').value = '';
         document.getElementById('phone').value = '';
         document.getElementById('password').required = true;
         document.getElementById('password_confirmation').required = true;
     }
 
-    function editStaff(id, name, email, department_id, faculty_id, position, phone) {
+    function editStaff(id, name, email, office_id, position, phone) {
         document.getElementById('staffForm').action = "/admin/staff/" + id;
         document.getElementById('method').value = 'PUT';
         document.getElementById('name').value = name;
         document.getElementById('email').value = email;
-        document.getElementById('department_id').value = department_id;
-        document.getElementById('faculty_id').value = faculty_id;
+        document.getElementById('office_id').value = office_id;
         document.getElementById('position').value = position;
         document.getElementById('phone').value = phone;
         document.getElementById('password').required = false;

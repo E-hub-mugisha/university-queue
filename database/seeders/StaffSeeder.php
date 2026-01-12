@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Staff;
-use App\Models\Department;
+use App\Models\Office;
 use App\Models\Faculty;
 use Illuminate\Support\Facades\Hash;
 
@@ -13,25 +13,20 @@ class StaffSeeder extends Seeder
 {
     public function run(): void
     {
-        // Fetch departments
-        $finance   = Department::where('name', 'Finance')->first();
-        $registrar = Department::where('name', 'Registrar')->first();
-        $it        = Department::where('name', 'Information Technology')->first();
-        $hod       = Department::where('name', 'Head of Department (HOD)')->first();
-        $dean      = Department::where('name', 'Dean Office')->first();
-
-        // Fetch faculties
-        $science     = Faculty::where('name', 'Faculty of Science')->first();
-        $engineering = Faculty::where('name', 'Faculty of Engineering')->first();
-        $business    = Faculty::where('name', 'Faculty of Business')->first();
+        // Fetch offices
+        $finance   = Office::where('name', 'Finance')->first();
+        $registrar = Office::where('name', 'Registrar')->first();
+        $it        = Office::where('name', 'Information Technology')->first();
+        $hod       = Office::where('name', 'Head of Department (HOD)')->first();
+        $dean      = Office::where('name', 'Dean Office')->first();
+        
 
         $staffMembers = [
             [
                 'name' => 'Dr. Jean Claude Niyonzima',
                 'email' => 'jc.niyonzima@university.edu',
                 'role' => 'staff',
-                'department_id' => $dean?->id,
-                'faculty_id' => $science?->id,
+                'office_id' => $dean?->id,
                 'position' => 'Dean of Faculty of Science',
                 'phone' => '0788123456',
             ],
@@ -39,8 +34,7 @@ class StaffSeeder extends Seeder
                 'name' => 'Ms. Alice Uwimana',
                 'email' => 'alice.uwimana@university.edu',
                 'role' => 'staff',
-                'department_id' => $finance?->id,
-                'faculty_id' => null,
+                'office_id' => $finance?->id,
                 'position' => 'Finance Officer',
                 'phone' => '0788234567',
             ],
@@ -48,8 +42,7 @@ class StaffSeeder extends Seeder
                 'name' => 'Mr. Patrick Habimana',
                 'email' => 'patrick.habimana@university.edu',
                 'role' => 'staff',
-                'department_id' => $registrar?->id,
-                'faculty_id' => null,
+                'office_id' => $registrar?->id,
                 'position' => 'Registrar Officer',
                 'phone' => '0788345678',
             ],
@@ -57,8 +50,7 @@ class StaffSeeder extends Seeder
                 'name' => 'Eng. Samuel Mugabo',
                 'email' => 'samuel.mugabo@university.edu',
                 'role' => 'staff',
-                'department_id' => $it?->id,
-                'faculty_id' => null,
+                'office_id' => $it?->id,
                 'position' => 'IT Support Lead',
                 'phone' => '0788456789',
             ],
@@ -66,8 +58,7 @@ class StaffSeeder extends Seeder
                 'name' => 'Dr. Grace Mukamana',
                 'email' => 'grace.mukamana@university.edu',
                 'role' => 'staff',
-                'department_id' => $hod?->id,
-                'faculty_id' => $engineering?->id,
+                'office_id' => $hod?->id,
                 'position' => 'Head of Department – Engineering',
                 'phone' => '0788567890',
             ],
@@ -75,8 +66,7 @@ class StaffSeeder extends Seeder
                 'name' => 'Mr. Emmanuel Nkurunziza',
                 'email' => 'emmanuel.nkurunziza@university.edu',
                 'role' => 'staff',
-                'department_id' => $hod?->id,
-                'faculty_id' => $business?->id,
+                'office_id' => $hod?->id,
                 'position' => 'Head of Department – Business',
                 'phone' => '0788678901',
             ],
@@ -100,8 +90,7 @@ class StaffSeeder extends Seeder
                 ['user_id' => $user->id],
                 [
                     'staff_number' => 'STF-' . date('Y') . '-' . str_pad($user->id, 4, '0', STR_PAD_LEFT),
-                    'department_id' => $data['department_id'],
-                    'faculty_id' => $data['faculty_id'],
+                    'office_id' => $data['office_id'],
                     'position' => $data['position'],
                     'phone' => $data['phone'],
                 ]

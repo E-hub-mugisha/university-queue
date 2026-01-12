@@ -19,7 +19,7 @@ return new class extends Migration
                 ->constrained('students')
                 ->cascadeOnDelete();
 
-            $table->foreignId('department_id')->constrained('departments');
+            $table->foreignId('office_id')->constrained('offices');
             $table->foreignId('service_type_id')->constrained('service_types');
 
             $table->text('description')->nullable();

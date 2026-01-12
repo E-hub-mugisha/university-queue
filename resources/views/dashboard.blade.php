@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Dashboard')
 @section('content')
 <div class="container">
 
@@ -49,10 +49,10 @@
         <div class="col-md-6 mb-4">
             <div class="card shadow">
                 <div class="card-header">
-                    Requests by Department
+                    Requests by Office
                 </div>
                 <div class="card-body">
-                    <canvas id="departmentChart"></canvas>
+                    <canvas id="officeChart"></canvas>
                 </div>
             </div>
         </div>
@@ -74,15 +74,15 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Requests by Department
-    const deptCtx = document.getElementById('departmentChart').getContext('2d');
+    // Requests by Office
+    const deptCtx = document.getElementById('officeChart').getContext('2d');
     new Chart(deptCtx, {
         type: 'bar',
         data: {
-            labels: {!! json_encode($requestsPerDepartment->pluck('name')) !!},
+            labels: {!! json_encode($requestsPerOffice->pluck('name')) !!},
             datasets: [{
                 label: '# of Requests',
-                data: {!! json_encode($requestsPerDepartment->pluck('service_requests_count')) !!},
+                data: {!! json_encode($requestsPerOffice->pluck('service_requests_count')) !!},
                 backgroundColor: 'rgba(67, 94, 190, 0.7)',
                 borderColor: 'rgba(67, 94, 190, 1)',
                 borderWidth: 1

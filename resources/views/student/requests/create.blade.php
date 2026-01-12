@@ -1,65 +1,147 @@
 @extends('layouts.app')
+@section('title', 'Create Service Request')
 
 @section('content')
-<div class="container">
-    <h3>Create Service Request</h3>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
 
-    @if(session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
+            {{-- Page Header --}}
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>Create Service Request</h3>
+                <a href="{{ route('student.requests.index') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left"></i> Back to Requests
+                </a>
+            </div>
+
+            {{-- Success Toast --}}
+            @if(session('success'))
+            <div class="toast-container position-fixed top-0 end-0 p-3">
+                <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            {{ session('success') }}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            {{-- Request Form Card --}}
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="POST" action="{{ route('student.requests.store') }}" enctype="multipart/form-data">
+                        @csrf
+
+                        {{-- Office Selection (Auto-fill if URL has office_id) --}}
+                        <div class="mb-3">
+                            <label class="form-label">Office</label>
+                            <select name="office_id" id="office" class="form-select" required {{ request()->has('office_id') ? 'disabled' : '' }}>
+                                <option value="">Select Office</option>
+                                @foreach($offices as $office)
+                                    <option value="{{ $office->id }}"
+                                        @if(old('office_id', request('office_id')) == $office->id) selected @endif>
+                                        {{ $office->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('office_id')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                        {{-- Service Type Selection --}}
+                        <div class="mb-3">
+                            <label class="form-label">Service Type</label>
+                            <select name="service_type_id" id="service_type" class="form-select" required>
+                                <option value="">Select Service Type</option>
+                            </select>
+                            @error('service_type_id')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                        {{-- Priority --}}
+                        <div class="mb-3">
+                            <label class="form-label">Priority</label>
+                            <select name="priority" class="form-select">
+                                <option value="normal" {{ old('priority') == 'normal' ? 'selected' : '' }}>Normal</option>
+                                <option value="urgent" {{ old('priority') == 'urgent' ? 'selected' : '' }}>Urgent</option>
+                            </select>
+                        </div>
+
+                        {{-- Description --}}
+                        <div class="mb-3">
+                            <label class="form-label">Description (Optional)</label>
+                            <textarea name="description" class="form-control" rows="4">{{ old('description') }}</textarea>
+                            @error('description')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                        {{-- Attachments --}}
+                        <div class="mb-3">
+                            <label class="form-label">Attachments (Optional)</label>
+                            <input type="file" name="attachments[]" class="form-control" multiple>
+                            <small class="text-muted">PDF, Images, Docs | Max 5MB each</small>
+                            @error('attachments.*')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                        {{-- Submit --}}
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-send"></i> Submit Request
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
     </div>
-    @endif
-
-    <form method="POST" action="{{ route('student.requests.store') }}" enctype="multipart/form-data">
-        @csrf
-
-        <div class="mb-3">
-            <label>department</label>
-            <select name="department_id" id="department" class="form-control" required>
-                <option value="">Select department</option>
-                @foreach ($departments as $department)
-                <option value="{{ $department->id }}">{{ $department->name }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        <div class="mb-3">
-            <label>Service Type</label>
-            <select name="service_type_id" id="service_type" class="form-control" required>
-                <option value="">Select Service Type</option>
-            </select>
-        </div>
-
-        <div class="mb-3">
-            <label>Description (Optional)</label>
-            <textarea class="form-control" name="description" rows="4"></textarea>
-        </div>
-
-        <div class="mb-3">
-            <label>Attachments (Optional)</label>
-            <input type="file" name="attachments[]" class="form-control" multiple>
-            <small>PDF, Images, Docs | Max 5MB each</small>
-        </div>
-
-        <button class="btn btn-primary">Submit Request</button>
-    </form>
 </div>
 
+{{-- Scripts --}}
 <script>
-    document.getElementById('department').addEventListener('change', function() {
-        let departmentId = this.value;
-        let serviceSelect = document.getElementById('service_type');
-        serviceSelect.innerHTML = '<option value="">Loading...</option>';
+    document.addEventListener('DOMContentLoaded', function() {
+        const officeSelect = document.getElementById('office');
+        const serviceSelect = document.getElementById('service_type');
+        const selectedOffice = officeSelect.value;
 
-        fetch('/api/service-types/' + departmentId)
-            .then(res => res.json())
-            .then(data => {
-                serviceSelect.innerHTML = '<option value="">Select Service Type</option>';
-                data.forEach(type => {
-                    serviceSelect.innerHTML += `<option value="${type.id}">${type.name}</option>`;
+        // Function to fetch service types
+        function fetchServiceTypes(officeId, selectedService = null) {
+            serviceSelect.innerHTML = '<option value="">Loading...</option>';
+            serviceSelect.disabled = true;
+
+            fetch(`/api/service-types/${officeId}`)
+                .then(res => res.json())
+                .then(data => {
+                    serviceSelect.innerHTML = '<option value="">Select Service Type</option>';
+                    data.forEach(type => {
+                        const selected = selectedService == type.id ? 'selected' : '';
+                        serviceSelect.innerHTML += `<option value="${type.id}" ${selected}>${type.name}</option>`;
+                    });
+                    serviceSelect.disabled = false;
+                })
+                .catch(() => {
+                    serviceSelect.innerHTML = '<option value="">Select Service Type</option>';
+                    serviceSelect.disabled = false;
                 });
-            });
+        }
+
+        // Initial fetch if office preselected
+        if (selectedOffice) {
+            fetchServiceTypes(selectedOffice, "{{ old('service_type_id') }}");
+        }
+
+        // Fetch on change
+        officeSelect.addEventListener('change', function() {
+            fetchServiceTypes(this.value);
+        });
     });
 </script>
-
 @endsection

@@ -3,7 +3,7 @@
 use App\Http\Controllers\Admin\AdminServiceRequestController;
 use App\Http\Controllers\Admin\AppointmentController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\DepartmentController;
+use App\Http\Controllers\Admin\OfficeController;
 use App\Http\Controllers\Admin\FacultyController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\StaffController;
@@ -28,8 +28,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/api/service-types/{department}', function ($departmentId) {
-    return \App\Models\ServiceType::where('department_id', $departmentId)->get();
+Route::get('/api/service-types/{office}', function ($officeId) {
+    return \App\Models\ServiceType::where('office_id', $officeId)->get();
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -49,7 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('requests/create', [ServiceRequestController::class, 'create'])->name('requests.create');
             Route::post('requests', [ServiceRequestController::class, 'store'])->name('requests.store');
             Route::get('requests/{request}', [ServiceRequestController::class, 'show'])->name('requests.show');
-
+            Route::post('requests/{request}/reply', [ServiceRequestController::class, 'reply'])->name('requests.reply');
             Route::get('appointments', [AppointmentController::class, 'studentIndex'])->name('appointments.index');
             Route::patch('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
             Route::get('appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
@@ -108,17 +108,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
 
         Route::prefix('admin')->name('admin.')->group(function () {
-            Route::get('departments', [DepartmentController::class, 'index'])->name('departments.index');
-            Route::post('departments', [DepartmentController::class, 'store'])->name('departments.store');
-            Route::put('departments/{department}', [DepartmentController::class, 'update'])->name('departments.update');
-            Route::delete('departments/{department}', [DepartmentController::class, 'destroy'])->name('departments.destroy');
-        });
-
-        Route::prefix('admin')->name('admin.')->group(function () {
-            Route::get('faculties', [FacultyController::class, 'index'])->name('faculties.index');
-            Route::post('faculties', [FacultyController::class, 'store'])->name('faculties.store');
-            Route::put('faculties/{faculty}', [FacultyController::class, 'update'])->name('faculties.update');
-            Route::delete('faculties/{faculty}', [FacultyController::class, 'destroy'])->name('faculties.destroy');
+            Route::get('offices', [OfficeController::class, 'index'])->name('offices.index');
+            Route::post('offices', [OfficeController::class, 'store'])->name('offices.store');
+            Route::put('offices/{office}', [OfficeController::class, 'update'])->name('offices.update');
+            Route::delete('offices/{office}', [OfficeController::class, 'destroy'])->name('offices.destroy');
+            Route::get('/offices/qrcodes', [OfficeController::class, 'qrCodes'])->name('offices.qrcodes');
+            // Optional: Download single QR code as PNG
+            Route::get('/office/qrcodes/{office}/download', [OfficeController::class, 'download'])->name('offices.qrcodes.download');
+            Route::get('/offices/qrcodes/download-all', [OfficeController::class, 'downloadAllPdf'])->name('offices.qrcodes.downloadAllPdf');
+            Route::get('/offices/qrcodes/download-all-zip', [OfficeController::class, 'downloadAllSvgZip'])
+                ->name('offices.qrcodes.downloadAllSvgZip');
         });
 
         Route::prefix('admin')->name('admin.')->group(function () {
@@ -151,6 +150,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('appointments', [AppointmentController::class, 'index'])->name('appointments.index');
             Route::get('appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
             Route::patch('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+
+            Route::put('appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule'])->name('appointments.reschedule');
         });
 
         Route::prefix('admin')->name('admin.')->group(function () {

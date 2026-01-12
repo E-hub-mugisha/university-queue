@@ -14,7 +14,7 @@
             <h5>Student Info</h5>
             <p><strong>Name:</strong> {{ $request->student->user->name ?? 'N/A' }}</p>
             <p><strong>Email:</strong> {{ $request->student->user->email ?? 'N/A' }}</p>
-            <p><strong>Department:</strong> {{ $request->department->name ?? 'N/A' }}</p>
+            <p><strong>Office:</strong> {{ $request->office->name ?? 'N/A' }}</p>
         </div>
     </div>
 

@@ -30,8 +30,7 @@
         </div>
         <div class="nk-sidebar-brand">
             <a href="#" class="logo-link nk-sidebar-logo">
-                <img class="logo-light logo-img" src="images/logo.png" alt="logo">
-                <img class="logo-dark logo-img" src="images/logo-dark.png" alt="logo-dark">
+                <i class="bi bi-stack me-2"></i> {{ config('app.name', 'Digital Queue') }}
             </a>
         </div>
     </div>
@@ -63,29 +62,28 @@
                     </li>
 
                     <li class="nk-menu-item">
-                        <a href="{{ route('admin.departments.index') }}" class="nk-menu-link {{ activeClass('admin.departments.*') }}">
+                        <a href="{{ route('admin.offices.index') }}" class="nk-menu-link {{ activeClass('admin.offices.*') }}">
                             <span class="nk-menu-icon"><em class="icon ni ni-building"></em></span>
-                            <span class="nk-menu-text">Departments</span>
+                            <span class="nk-menu-text">Offices</span>
                         </a>
                     </li>
-
                     <li class="nk-menu-item">
-                        <a href="{{ route('admin.faculties.index') }}" class="nk-menu-link {{ activeClass('admin.faculties.*') }}">
-                            <span class="nk-menu-icon"><em class="icon ni ni-mortarboard"></em></span>
-                            <span class="nk-menu-text">Faculties</span>
+                        <a href="{{ route('admin.offices.qrcodes') }}" class="nk-menu-link {{ activeClass('admin.offices.qrcodes') }}">
+                            <span class="nk-menu-icon"><em class="icon ni ni-qrcode"></em></span>
+                            <span class="nk-menu-text">Office QR Codes</span>
                         </a>
                     </li>
 
                     <li class="nk-menu-item">
                         <a href="{{ route('admin.staff.index') }}" class="nk-menu-link {{ activeClass('admin.staff.*') }}">
-                            <span class="nk-menu-icon"><em class="icon ni ni-person"></em></span>
+                            <span class="nk-menu-icon"><em class="icon ni ni-users"></em></span>
                             <span class="nk-menu-text">Staff</span>
                         </a>
                     </li>
 
                     <li class="nk-menu-item">
                         <a href="{{ route('admin.students.index') }}" class="nk-menu-link {{ activeClass('admin.students.*') }}">
-                            <span class="nk-menu-icon"><em class="icon ni ni-person-lines"></em></span>
+                            <span class="nk-menu-icon"><em class="icon ni ni-users"></em></span>
                             <span class="nk-menu-text">Students</span>
                         </a>
                     </li>

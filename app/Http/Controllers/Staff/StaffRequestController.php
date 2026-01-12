@@ -16,7 +16,7 @@ class StaffRequestController extends Controller
         $staff = auth()->user()->staff;
 
         $requests = ServiceRequest::with(['student.user', 'serviceType'])
-            ->where('department_id', $staff->department_id)
+            ->where('office_id', $staff->office_id)
             ->orderBy('created_at', 'asc') // Queue order
             ->get();
 
@@ -27,7 +27,7 @@ class StaffRequestController extends Controller
     {
         // Security check
         abort_if(
-            $request->department_id !== auth()->user()->staff->department_id,
+            $request->office_id !== auth()->user()->staff->office_id,
             403
         );
 

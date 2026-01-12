@@ -18,10 +18,8 @@ return new class extends Migration
             // Link to users table
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
 
-            // Nullable foreign keys for department and faculty
-            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('set null');
-            $table->foreignId('faculty_id')->nullable()->constrained('faculties')->onDelete('set null');
-
+            // Nullable foreign keys for office and faculty
+            $table->foreignId('office_id')->nullable()->constrained('offices')->onDelete('set null');
             $table->string('position')->nullable();
             $table->string('phone')->nullable();
             $table->timestamps();

@@ -1,67 +1,111 @@
 @extends('layouts.app')
 @section('title', 'User Management')
 @section('content')
-<div class="container">
-    <h2>User Management</h2>
 
-    <!-- Success message -->
-    @if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+<div class="container-fluid">
+    <div class="nk-content-inner">
+        <div class="nk-content-body">
 
-    <!-- Add User Button -->
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#userModal" onclick="resetForm()">Add User</button>
+            <div class="nk-block nk-block-lg">
+                <div class="nk-block-head">
+                    <div class="nk-block-head-content">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="nk-block-title">User Management</h4>
+                            <div class="d-flex gap-2">
+                                <!-- Add User Button -->
+                                <button class="btn btn-primary mb-3 p-3" data-bs-toggle="modal" data-bs-target="#userModal" onclick="resetForm()">Add User</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Users Table -->
+                <div class="card card-bordered card-preview">
+                    <div class="card-inner">
+                        <table class="datatable-init nowrap nk-tb-list nk-tb-ulist"
+                            data-auto-responsive="false">
+                            <thead>
+                                <tr class="nk-tb-item nk-tb-head">
+                                    <th class="nk-tb-col">Name</th>
+                                    <th class="nk-tb-col">Email</th>
+                                    <th class="nk-tb-col">Verified</th>
+                                    <th class="nk-tb-col">Role</th>
+                                    <th class="nk-tb-col">Status</th>
+                                    <th class="nk-tb-col nk-tb-col-tools text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($users as $user)
+                                <tr class="nk-tb-item">
+                                    <td class="nk-tb-col">{{ $user->name }}</td>
+                                    <td class="nk-tb-col">{{ $user->email }}</td>
+                                    <td class="nk-tb-col">
+                                        @if($user->email_verified_at)
+                                        <span class="badge bg-success">Verified</span>
+                                        @else
+                                        <span class="badge bg-warning text-dark">Unverified</span>
+                                        @endif
+                                    </td>
+                                    <td class="nk-tb-col">{{ ucfirst($user->role) }}</td>
+                                    <td class="nk-tb-col">
+                                        @if(!$user->is_active)
+                                        <span class="badge bg-danger">Disabled</span>
+                                        @else
+                                        <span class="badge bg-success">Active</span>
+                                        @endif
+                                    </td>
+                                    <td class="nk-tb-col nk-tb-col-tools">
+                                        <ul class="nk-tb-actions gx-1">
+                                            <li>
+                                                <div class="drodown">
+                                                    <a href="#"
+                                                        class="dropdown-toggle btn btn-icon btn-trigger"
+                                                        data-bs-toggle="dropdown">
+                                                        <em class="icon ni ni-more-h"></em>
+                                                    </a>
+                                                    <div class="dropdown-menu dropdown-menu-end">
+                                                        <ul class="link-list-opt no-bdr">
+                                                            <li>
+                                                                <a role="button" class="text-warning" data-bs-toggle="modal" data-bs-target="#userModal"
+                                                                    onclick="editUser({{ $user->id }}, '{{ $user->name }}', '{{ $user->email }}', '{{ $user->role }}')">Edit</a>
+                                                            </li>
+                                                            <li>
+                                                                <!-- Disable / Enable -->
+                                                                <a role="button" class="{{ $user->is_active ? 'text-warning' : 'text-success' }}"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#statusModal{{ $user->id }}">
+                                                                    <i class="bi {{ $user->is_active ? 'bi-person-x' : 'bi-person-check' }}"></i>
+                                                                    {{ $user->is_active ? 'Disable' : 'Enable' }}
+                                                                </a>
+                                                            </li>
+                                                            <li>
 
-    <!-- Users Table -->
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($users as $user)
-            <tr>
-                <td>{{ $user->name }}</td>
-                <td>{{ $user->email }}</td>
-                <td>{{ ucfirst($user->role) }}</td>
-                <td>
-                    @if(!$user->is_active)
-                    <span class="badge bg-danger">Disabled</span>
-                    @else
-                    <span class="badge bg-success">Active</span>
-                    @endif
-                </td>
-                <td>
-                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#userModal"
-                        onclick="editUser({{ $user->id }}, '{{ $user->name }}', '{{ $user->email }}', '{{ $user->role }}')">Edit</button>
-                    <!-- Disable / Enable -->
-                    <button class="btn btn-sm {{ $user->is_active ? 'btn-warning' : 'btn-success' }}"
-                        data-bs-toggle="modal"
-                        data-bs-target="#statusModal{{ $user->id }}">
-                        <i class="bi {{ $user->is_active ? 'bi-person-x' : 'bi-person-check' }}"></i>
-                        {{ $user->is_active ? 'Disable' : 'Enable' }}
-                    </button>
-
-                    <!-- Reset Password -->
-                    <button class="btn btn-sm btn-danger"
-                        data-bs-toggle="modal"
-                        data-bs-target="#resetModal{{ $user->id }}">
-                        <i class="bi bi-key"></i>Rest Password
-                    </button>
-                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $user->id }}">Delete</button>
-
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+                                                                <!-- Reset Password -->
+                                                                <a role="button" class="text-danger"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#resetModal{{ $user->id }}">
+                                                                    <i class="bi bi-key"></i>Reset Password
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <!-- Delete User -->
+                                                                <a role="button" class="text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $user->id }}">Delete</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
 @foreach($users as $user)
 <div class="modal fade" id="statusModal{{ $user->id }}" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -198,6 +242,19 @@
     </div>
 </div>
 
+@if(session('success'))
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div class="toast show align-items-center text-bg-success border-0">
+        <div class="d-flex">
+            <div class="toast-body">
+                {{ session('success') }}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+@endif
 <script>
     function resetForm() {
         document.getElementById('userForm').action = "{{ route('admin.users.store') }}";

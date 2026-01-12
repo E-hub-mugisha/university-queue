@@ -17,7 +17,7 @@ class AppointmentController extends Controller
         $appointments = Appointment::with([
             'serviceRequest.student.user',
             'staff.user',
-            'staff.department'
+            'staff.office'
         ])
             ->orderBy('appointment_date')
             ->orderBy('appointment_time')
@@ -31,7 +31,7 @@ class AppointmentController extends Controller
         $appointment->load([
             'serviceRequest.student.user',
             'staff.user',
-            'staff.department'
+            'staff.office'
         ]);
 
         return view('admin.appointments.show', compact('appointment'));
@@ -120,5 +120,22 @@ class AppointmentController extends Controller
             ->orderBy('appointment_time')
             ->paginate(10);
         return view('student.appointments.index', compact('appointments'));
+    }
+
+    public function reschedule(Request $request, Appointment $appointment)
+    {
+        $request->validate([
+            'appointment_date' => 'required|date|after_or_equal:today',
+            'appointment_time' => 'required'
+        ]);
+
+        $appointment->update([
+            'appointment_date' => $request->appointment_date,
+            'appointment_time' => $request->appointment_time,
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Appointment rescheduled successfully.');
     }
 }

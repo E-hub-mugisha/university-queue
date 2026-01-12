@@ -9,7 +9,7 @@ class Staff extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['staff_number','user_id', 'department_id', 'faculty_id', 'position', 'phone'];
+    protected $fillable = ['staff_number','user_id', 'office_id', 'faculty_id', 'position', 'phone'];
 
     protected static function boot()
     {
@@ -37,16 +37,10 @@ class Staff extends Model
         return $this->belongsTo(User::class);
     }
 
-    // Link to department
-    public function department()
+    // Link to office
+    public function office()
     {
-        return $this->belongsTo(Department::class);
-    }
-
-    // Link to faculty
-    public function faculty()
-    {
-        return $this->belongsTo(Faculty::class);
+        return $this->belongsTo(Office::class);
     }
 
     // Link to appointments

@@ -1,94 +1,94 @@
 @extends('layouts.app')
-
+@section('title', 'My Service Requests')
 @section('content')
-<div class="container mt-4">
 
-    <div class="d-flex justify-content-between mb-3">
-        <h4 class="fw-bold">My Service Requests</h4>
+<div class="container-fluid">
+    <div class="nk-content-inner">
+        <div class="nk-content-body">
 
-        <a href="{{ route('student.requests.create') }}" class="btn btn-primary">
-            + New Request
-        </a>
-    </div>
+            <div class="nk-block nk-block-lg">
+                <div class="nk-block-head">
+                    <div class="nk-block-head-content">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="nk-block-title">My Service Requests</h4>
+                            <div class="d-flex gap-2">
+                                @if(session('success'))
+                                <div class="alert alert-success">{{ session('success') }}</div>
+                                @endif
+                                <a href="{{ route('student.requests.create') }}" class="btn btn-primary p-3">
+                                    + New Request
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+                <div class="card card-bordered card-preview">
+                    <div class="card-inner">
+                        <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="true">
+                            <thead>
+                                <tr class="nk-tb-item nk-tb-head">
+                                    <th class="nk-tb-col">#</th>
+                                    <th class="nk-tb-col">Request No</th>
+                                    <th class="nk-tb-col">Office</th>
+                                    <th class="nk-tb-col">Service Type</th>
+                                    <th class="nk-tb-col">Status</th>
+                                    <th class="nk-tb-col">Submitted On</th>
+                                    <th class="nk-tb-col">Action</th>
+                                </tr>
+                            </thead>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <table class="table table-bordered table-striped align-middle">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Request No</th>
-                        <th>Office / Department</th>
-                        <th>Service Type</th>
-                        <th>Status</th>
-                        <th>Submitted On</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
+                            <tbody>
+                                @foreach($requests as $index => $req)
+                                <tr class="nk-tb-item">
+                                    <td class="nk-tb-col">{{ $index + 1 }}</td>
 
-                <tbody>
-                    @forelse($requests as $index => $req)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
+                                    <td class="nk-tb-col fw-bold">
+                                        {{ $req->request_number }}
+                                    </td>
 
-                        <td class="fw-bold">
-                            {{ $req->request_number }}
-                        </td>
+                                    <td class="nk-tb-col">
+                                        {{ $req->office?->name ?? 'N/A' }}
+                                    </td>
 
-                        <td>
-                            {{ $req->department?->name ?? 'N/A' }}
-                        </td>
+                                    <td class="nk-tb-col">
+                                        {{ $req->serviceType?->name ?? 'N/A' }}
+                                    </td>
 
-                        <td>
-                            {{ $req->serviceType?->name ?? 'N/A' }}
-                        </td>
+                                    <td class="nk-tb-col">
+                                        @php
+                                        $badge = match($req->status){
+                                        'Submitted' => 'primary',
+                                        'In Review' => 'warning',
+                                        'Awaiting Student Response' => 'info',
+                                        'Appointment Required' => 'secondary',
+                                        'Resolved' => 'success',
+                                        'Closed' => 'dark',
+                                        default => 'secondary'
+                                        };
+                                        @endphp
 
-                        <td>
-                            @php
-                                $badge = match($req->status){
-                                    'Submitted' => 'primary',
-                                    'In Review' => 'warning',
-                                    'Awaiting Student Response' => 'info',
-                                    'Appointment Required' => 'secondary',
-                                    'Resolved' => 'success',
-                                    'Closed' => 'dark',
-                                    default => 'secondary'
-                                };
-                            @endphp
+                                        <span class="badge bg-{{ $badge }}">
+                                            {{ $req->status }}
+                                        </span>
+                                    </td>
 
-                            <span class="badge bg-{{ $badge }}">
-                                {{ $req->status }}
-                            </span>
-                        </td>
+                                    <td class="nk-tb-col">{{ $req->created_at->format('d M Y h:i A') }}</td>
 
-                        <td>{{ $req->created_at->format('d M Y h:i A') }}</td>
+                                    <td class="nk-tb-col">
+                                        <a href="{{ route('student.requests.show',$req->id) }}"
+                                            class="btn btn-sm btn-outline-dark">
+                                            View
+                                        </a>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
 
-                        <td>
-                            <a href="{{ route('student.requests.show',$req->id) }}"
-                               class="btn btn-sm btn-outline-dark">
-                                View
-                            </a>
-                        </td>
-                    </tr>
-
-                    @empty
-                    <tr>
-                        <td colspan="7" class="text-center text-muted">
-                            No service requests found.
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-
-            <div class="mt-3">
-                {{ $requests->links() }}
+                    </div>
+                </div>
             </div>
-
         </div>
     </div>
 </div>

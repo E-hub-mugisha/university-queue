@@ -13,15 +13,15 @@ class AdminServiceRequestController extends Controller
 {
     public function index(Request $request)
     {
-        // Optional: filter by status or department
-        $query = ServiceRequest::with(['student.user', 'department', 'serviceType']);
+        // Optional: filter by status or office
+        $query = ServiceRequest::with(['student.user', 'office', 'serviceType']);
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        if ($request->filled('department_id')) {
-            $query->where('department_id', $request->department_id);
+        if ($request->filled('office_id')) {
+            $query->where('office_id', $request->office_id);
         }
 
         $requests = $query->latest()->paginate(15);
@@ -32,7 +32,7 @@ class AdminServiceRequestController extends Controller
     // Show request detail
     public function show(ServiceRequest $request)
     {
-        $request->load(['student.user', 'department', 'serviceType', 'replies']);
+        $request->load(['student.user', 'office', 'serviceType', 'replies']);
         return view('admin.requests.show', compact('request'));
     }
 

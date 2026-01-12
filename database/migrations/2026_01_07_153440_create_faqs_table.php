@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('question');
             $table->text('answer');
 
-            $table->foreignId('department_id')
+            $table->foreignId('office_id')
                 ->nullable()
-                ->constrained('departments')
+                ->constrained('offices')
                 ->nullOnDelete();
 
             $table->boolean('is_active')->default(true);

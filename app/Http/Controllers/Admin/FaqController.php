@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Department;
+use App\Models\Office;
 use App\Models\Faq;
 use Illuminate\Http\Request;
 
@@ -11,9 +11,9 @@ class FaqController extends Controller
 {
     public function index()
     {
-        $faqs = Faq::with('department')->latest()->paginate(10);
-        $departments = Department::all();
-        return view('admin.faqs.index', compact('faqs', 'departments'));
+        $faqs = Faq::with('office')->latest()->paginate(10);
+        $offices = Office::all();
+        return view('admin.faqs.index', compact('faqs', 'offices'));
     }
 
     public function store(Request $request)
@@ -21,7 +21,7 @@ class FaqController extends Controller
         $request->validate([
             'question' => 'required|string',
             'answer' => 'required|string',
-            'department_id' => 'nullable|exists:departments,id',
+            'office_id' => 'nullable|exists:offices,id',
         ]);
 
         Faq::create($request->all());
@@ -34,7 +34,7 @@ class FaqController extends Controller
         $request->validate([
             'question' => 'required',
             'answer' => 'required',
-            'department_id' => 'nullable|exists:departments,id',
+            'office_id' => 'nullable|exists:offices,id',
         ]);
 
         $faq->update($request->all());
@@ -57,7 +57,7 @@ class FaqController extends Controller
     public function faq()
     {
         $faqs = Faq::where('is_active', true)
-            ->orderBy('department_id')
+            ->orderBy('office_id')
             ->get();
 
         return view('student.faq.index', compact('faqs'));

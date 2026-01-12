@@ -32,7 +32,7 @@ default => 'bg-secondary',
                 <i class="bi bi-arrow-repeat"></i> Reschedule
             </button>
 
-            <a href="{{ route('admin.appointments.index') }}"
+            <a href="{{ route('staff.appointments.index') }}"
                 class="btn btn-secondary p-3">
                 <i class="bi bi-arrow-left"></i> Back to Appointments
             </a>
@@ -166,7 +166,7 @@ default => 'bg-secondary',
         <div class="modal-content border-0 shadow-lg rounded-4">
 
             <form method="POST"
-                action="{{ route('admin.appointments.reschedule', $appointment->id) }}">
+                action="{{ route('staff.appointments.reschedule', $appointment->id) }}">
                 @csrf
                 @method('PUT')
 

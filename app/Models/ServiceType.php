@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class ServiceType extends Model
 {
-    protected $fillable = ['department_id', 'name'];
+    protected $fillable = ['office_id', 'name'];
 
-    public function department()
+    public function office()
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Office::class);
     }
 }

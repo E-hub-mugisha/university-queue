@@ -3,13 +3,13 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Department;
+use App\Models\Office;
 
-class DepartmentSeeder extends Seeder
+class OfficeSeeder extends Seeder
 {
     public function run(): void
     {
-        $departments = [
+        $offices = [
             [
                 'name' => 'Registrar',
                 'description' => 'Handles student registration, transcripts, and academic records'
@@ -48,10 +48,10 @@ class DepartmentSeeder extends Seeder
             ],
         ];
 
-        foreach ($departments as $department) {
-            Department::updateOrCreate(
-                ['name' => $department['name']],
-                $department
+        foreach ($offices as $office) {
+            Office::updateOrCreate(
+                ['name' => $office['name']],
+                $office
             );
         }
     }
