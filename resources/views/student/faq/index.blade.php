@@ -17,9 +17,9 @@
                                 @if(session('success'))
                                 <div class="alert alert-success">{{ session('success') }}</div>
                                 @endif
-                                <button class="btn btn-primary p-3" data-bs-toggle="modal" data-bs-target="#addFaq">
+                                <!-- <button class="btn btn-primary p-3" data-bs-toggle="modal" data-bs-target="#addFaq">
                                     Add FAQ
-                                </button>
+                                </button> -->
                             </div>
                         </div>
                     </div>

@@ -14,10 +14,15 @@ use App\Http\Controllers\Staff\StaffDashboardController;
 use App\Http\Controllers\Staff\StaffRequestController;
 use App\Http\Controllers\Student\ServiceRequestController;
 use App\Http\Controllers\Student\StudentDashboardController;
+use App\Models\Faq;
+use App\Models\Office;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('auth.login');
+
+    $faqs = Faq::where('is_active', true)->latest()->get();
+    $offices = Office::all();
+    return view('welcome', compact('faqs', 'offices'));
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');

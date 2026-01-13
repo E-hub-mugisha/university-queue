@@ -8,7 +8,9 @@
             </div>
             <div class="nk-header-brand d-xl-none">
                 <a href="#" class="logo-link">
-                    <i class="bi bi-stack me-2"></i> {{ config('app.name', 'Digital Queue') }}
+                    <img src="{{ asset('logo_unilak.jfif') }}"
+                                        alt="Digital Queue Logo"
+                                        width="40" height="40">
                 </a>
             </div>
             <div class="nk-header-tools">

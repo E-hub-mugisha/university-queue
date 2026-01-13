@@ -10,7 +10,7 @@
 
     <div style="max-width:600px; margin:auto; background:#ffffff; padding:20px; border-radius:6px;">
 
-        <h2 style="color:#435ebe;">Appointment Scheduled</h2>
+        <h2 style="color:#00225A;">Appointment Scheduled</h2>
 
         <p>Hello <strong>{{ $serviceRequest->student->user->name }}</strong>,</p>
 

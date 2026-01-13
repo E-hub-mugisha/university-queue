@@ -30,7 +30,9 @@
         </div>
         <div class="nk-sidebar-brand">
             <a href="#" class="logo-link nk-sidebar-logo">
-                <i class="bi bi-stack me-2"></i> {{ config('app.name', 'Digital Queue') }}
+                <img src="{{ asset('logo_unilak.jfif') }}"
+                    alt="Digital Queue Logo"
+                    width="40" height="40">
             </a>
         </div>
     </div>

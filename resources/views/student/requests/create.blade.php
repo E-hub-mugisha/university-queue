@@ -37,19 +37,29 @@
                         {{-- Office Selection (Auto-fill if URL has office_id) --}}
                         <div class="mb-3">
                             <label class="form-label">Office</label>
-                            <select name="office_id" id="office" class="form-select" required {{ request()->has('office_id') ? 'disabled' : '' }}>
+
+                            <select id="office"
+                                class="form-select"
+                                {{ request()->has('office_id') ? 'disabled' : '' }}>
                                 <option value="">Select Office</option>
                                 @foreach($offices as $office)
-                                    <option value="{{ $office->id }}"
-                                        @if(old('office_id', request('office_id')) == $office->id) selected @endif>
-                                        {{ $office->name }}
-                                    </option>
+                                <option value="{{ $office->id }}"
+                                    {{ old('office_id', request('office_id')) == $office->id ? 'selected' : '' }}>
+                                    {{ $office->name }}
+                                </option>
                                 @endforeach
                             </select>
+
+                            {{-- Hidden input ensures value is submitted --}}
+                            <input type="hidden"
+                                name="office_id"
+                                value="{{ old('office_id', request('office_id')) }}">
+
                             @error('office_id')
-                                <small class="text-danger">{{ $message }}</small>
+                            <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
+
 
                         {{-- Service Type Selection --}}
                         <div class="mb-3">
@@ -58,7 +68,7 @@
                                 <option value="">Select Service Type</option>
                             </select>
                             @error('service_type_id')
-                                <small class="text-danger">{{ $message }}</small>
+                            <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
 
@@ -76,7 +86,7 @@
                             <label class="form-label">Description (Optional)</label>
                             <textarea name="description" class="form-control" rows="4">{{ old('description') }}</textarea>
                             @error('description')
-                                <small class="text-danger">{{ $message }}</small>
+                            <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
 
@@ -86,7 +96,7 @@
                             <input type="file" name="attachments[]" class="form-control" multiple>
                             <small class="text-muted">PDF, Images, Docs | Max 5MB each</small>
                             @error('attachments.*')
-                                <small class="text-danger">{{ $message }}</small>
+                            <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
 

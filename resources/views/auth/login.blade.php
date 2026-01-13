@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Digital Queue System</title>
+    <title>Login | {{ config('app.name', 'Digital Queue System') }}</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -15,7 +15,7 @@
     <style>
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #435ebe, #6f86ff);
+            background: linear-gradient(135deg, #00225A, #6f86ff);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -29,7 +29,7 @@
         }
 
         .login-left {
-            background: linear-gradient(135deg, #435ebe, #6f86ff);
+            background: linear-gradient(135deg, #00225A, #6f86ff);
             color: #fff;
             padding: 40px;
         }
@@ -48,7 +48,7 @@
         }
 
         .btn-primary {
-            background-color: #435ebe;
+            background-color: #00225A;
             border: none;
             border-radius: 12px;
             padding: 12px;
@@ -60,8 +60,8 @@
         }
 
         .form-check-input:checked {
-            background-color: #435ebe;
-            border-color: #435ebe;
+            background-color: #00225A;
+            border-color: #00225A;
         }
 
         @media (max-width: 768px) {
@@ -82,9 +82,6 @@
 
                         <!-- LEFT SIDE -->
                         <div class="col-md-6 login-left d-flex flex-column justify-content-center">
-                            <a class="navbar-brand fw-bold" href="#">
-                                <i class="bi bi-stack me-2"></i> {{ config('app.name', 'Digital Queue') }}
-                            </a>
                             <h3 class="mt-3">Welcome Back</h3>
                             <p class="mb-4">
                                 Login to access your dashboard, manage service requests,
@@ -99,7 +96,13 @@
 
                         <!-- RIGHT SIDE -->
                         <div class="col-md-6 login-right">
-                            <h4 class="fw-bold mb-4 text-center">Sign In</h4>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <a class="navbar-brand fw-bold mb-4" href="#">
+                                    <img src="{{ asset('logo_unilak.jfif') }}"
+                                        alt="Digital Queue Logo"
+                                        width="40" height="40">
+                                </a>
+                            </div>
 
                             <!-- Validation Errors -->
                             @if ($errors->any())

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register | Digital Queue System</title>
+    <title>Register | {{ config('app.name', 'Digital Queue System') }}</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -15,7 +15,7 @@
     <style>
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #435ebe, #6f86ff);
+            background: linear-gradient(135deg, #00225A, #6f86ff);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -29,7 +29,7 @@
         }
 
         .register-left {
-            background: linear-gradient(135deg, #435ebe, #6f86ff);
+            background: linear-gradient(135deg, #00225A, #6f86ff);
             color: #fff;
             padding: 40px;
         }
@@ -45,7 +45,7 @@
         }
 
         .btn-primary {
-            background-color: #435ebe;
+            background-color: #00225A;
             border: none;
             border-radius: 12px;
             padding: 12px;
@@ -74,9 +74,6 @@
 
                         <!-- LEFT -->
                         <div class="col-md-5 register-left d-flex flex-column justify-content-center">
-                            <a class="navbar-brand fw-bold" href="#">
-                                <i class="bi bi-stack me-2"></i> {{ config('app.name', 'Digital Queue') }}
-                            </a>
                             <h3 class="mt-3">Create Account</h3>
                             <p class="mb-4">
                                 Join the Digital Queue System to submit requests,
@@ -91,7 +88,13 @@
 
                         <!-- RIGHT -->
                         <div class="col-md-7 register-right">
-                            <h4 class="fw-bold mb-4 text-center">Register</h4>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <a class="navbar-brand fw-bold mb-4" href="#">
+                                    <img src="{{ asset('logo_unilak.jfif') }}"
+                                        alt="Digital Queue Logo"
+                                        width="40" height="40">
+                                </a>
+                            </div>
 
                             <!-- Errors -->
                             @if ($errors->any())

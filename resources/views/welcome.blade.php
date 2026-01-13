@@ -18,7 +18,7 @@
         }
 
         .hero {
-            background: linear-gradient(135deg, #435ebe, #6f86ff);
+            background: linear-gradient(135deg, #00225A, #6f86ff);
             color: #fff;
             padding: 90px 0;
         }
@@ -31,7 +31,7 @@
             width: 55px;
             height: 55px;
             border-radius: 12px;
-            background: #435ebe;
+            background: #00225A;
             color: #fff;
             display: flex;
             align-items: center;
@@ -50,7 +50,7 @@
             width: 45px;
             height: 45px;
             border-radius: 50%;
-            background: #435ebe;
+            background: #00225A;
             color: #fff;
             font-weight: bold;
             display: flex;
@@ -71,7 +71,9 @@
     <nav class="navbar navbar-expand-lg bg-white shadow-sm py-3">
         <div class="container">
             <a class="navbar-brand fw-bold" href="#">
-                <i class="bi bi-stack me-2"></i> Digital Queue
+                <img src="{{ asset('logo_unilak.jfif') }}"
+                    alt="Digital Queue Logo"
+                    width="40" height="40">
             </a>
 
             <div class="ms-auto">
@@ -109,26 +111,32 @@
             </div>
 
             <div class="row g-4">
-                @foreach ([
-                ['Finance', 'bi-cash-coin'],
-                ['Registrar', 'bi-journal-text'],
-                ['IT Support', 'bi-pc-display'],
-                ['HOD Office', 'bi-person-badge'],
-                ['Dean Office', 'bi-mortarboard']
-                ] as [$name, $icon])
+                @forelse($offices as $office)
                 <div class="col-md-4">
                     <div class="card p-4 text-center h-100">
                         <div class="feature-icon mx-auto">
-                            <i class="bi {{ $icon }}"></i>
+                            <i class="bi {{ $office->icon ?? 'bi-building' }}"></i>
                         </div>
-                        <h5 class="fw-bold">{{ $name }}</h5>
+
+                        <h5 class="fw-bold">{{ $office->name }}</h5>
+
                         <p class="text-muted mb-0">
                             Submit requests and track progress without long queues.
                         </p>
+
+                        <a href="{{ route('student.requests.create', ['office_id' => $office->id]) }}"
+                            class="btn btn-primary mt-3">
+                            Request from {{ $office->name }}
+                        </a>
                     </div>
                 </div>
-                @endforeach
+                @empty
+                <div class="col-12 text-center text-muted">
+                    No offices available at the moment.
+                </div>
+                @endforelse
             </div>
+
         </div>
     </section>
 
@@ -174,34 +182,32 @@
             </div>
 
             <div class="accordion accordion-flush" id="faqAccordion">
+                @forelse($faqs as $index => $faq)
                 <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq1">
-                            How do I track my request?
+                    <h2 class="accordion-header" id="heading{{ $faq->id }}">
+                        <button class="accordion-button collapsed"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#faq{{ $faq->id }}"
+                            aria-expanded="false">
+                            {{ $faq->question }}
                         </button>
                     </h2>
-                    <div id="faq1" class="accordion-collapse collapse">
-                        <div class="accordion-body">
-                            Log in and navigate to “My Requests” to see the current status.
-                        </div>
-                    </div>
-                </div>
 
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq2">
-                            When do I need to visit the office?
-                        </button>
-                    </h2>
-                    <div id="faq2" class="accordion-collapse collapse">
+                    <div id="faq{{ $faq->id }}"
+                        class="accordion-collapse collapse"
+                        data-bs-parent="#faqAccordion">
                         <div class="accordion-body">
-                            Only when your request is marked as “Appointment Required”.
+                            {{ $faq->answer }}
                         </div>
                     </div>
                 </div>
+                @empty
+                <p class="text-center text-muted">No FAQs available.</p>
+                @endforelse
             </div>
         </div>
     </section>
+
 
     <!-- FOOTER -->
     <footer class="py-4">
