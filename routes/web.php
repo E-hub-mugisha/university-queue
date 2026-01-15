@@ -17,6 +17,7 @@ use App\Http\Controllers\Student\StudentDashboardController;
 use App\Models\Faq;
 use App\Models\Office;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 
 Route::get('/', function () {
 
@@ -24,6 +25,10 @@ Route::get('/', function () {
     $offices = Office::all();
     return view('welcome', compact('faqs', 'offices'));
 });
+
+// Route::get('/', function () {
+//     return view('hello');
+// });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -94,10 +99,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('requests/{request}/reply', [StaffRequestController::class, 'reply'])->name('requests.reply');
 
             Route::get('appointments', [AppointmentController::class, 'staffIndex'])->name('appointments.index');
-            Route::get('appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
+            Route::get('appointments/{appointment}', [AppointmentController::class, 'showStaff'])->name('appointments.show');
             Route::post('appointments/{appointment}/update', [AppointmentController::class, 'update'])->name('appointments.update');
             Route::post('requests/{serviceRequest}/appointment', [AppointmentController::class, 'store'])->name('appointments.store');
             Route::patch('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+            Route::put('staff/appointments/{appointment}/reschedule', [AppointmentController::class, 'rescheduleStaff'])->name('appointments.reschedule');
         });
 
         Route::prefix('staff')->name('staff.')->group(function () {
@@ -179,4 +185,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
+Route::get('/seed-admin', function () {
+    Artisan::call('db:seed', [
+        '--class' => 'AdminSeeder',
+        '--force' => true // allow seeding in production if needed
+    ]);
+
+    return 'Admin user seeded successfully!';
+});
 require __DIR__ . '/auth.php';

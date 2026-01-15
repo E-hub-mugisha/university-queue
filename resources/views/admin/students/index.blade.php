@@ -14,7 +14,20 @@
                             <div class="d-flex gap-2">
                                 @if(session('success'))
                                     <div class="alert alert-success">{{ session('success') }}</div>
+                                @elseif(session('error'))
+                                    <div class="alert alert-danger">{{ session('error') }}</div>
                                 @endif
+
+                                @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 
                                 <button class="btn btn-primary mb-3 p-3" data-bs-toggle="modal" data-bs-target="#studentModal" onclick="resetForm()">Add Student</button>
                             </div>
@@ -132,6 +145,11 @@
                     </div>
 
                     <div class="mb-2">
+                        <label>Student Number</label>
+                        <input type="text" class="form-control" name="student_number" id="student_number" placeholder="student_number" required>
+                    </div>
+
+                    <div class="mb-2">
                         <label>Password</label>
                         <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
                     </div>
@@ -177,6 +195,7 @@ function resetForm() {
     // Clear all fields
     document.getElementById('name').value = "";
     document.getElementById('email').value = "";
+    documnent.getElementById('student_number').value = "";
     document.getElementById('password').value = "";
     document.getElementById('password_confirmation').value = "";
     document.getElementById('program').value = "";
@@ -191,6 +210,7 @@ function editStudent(id, name, email, program, level, phone) {
     // Populate fields
     document.getElementById('name').value = name;
     document.getElementById('email').value = email;
+    document.getElementById('student_number').value = "";
     document.getElementById('password').value = "";
     document.getElementById('password_confirmation').value = "";
     document.getElementById('program').value = program;

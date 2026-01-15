@@ -30,6 +30,7 @@ class StudentController extends Controller
             'program'  => 'nullable|string|max:255',
             'level'    => 'nullable|string|max:50',
             'phone'    => 'nullable|string|max:20',
+            'student_number' => 'nullable|string|unique:students,student_number',
         ]);
 
         // 1️⃣ Create User
@@ -46,7 +47,7 @@ class StudentController extends Controller
             'program'        => $request->program,
             'level'          => $request->level,
             'phone'          => $request->phone,
-            // student_number is auto-generated in Student model
+            'student_number' => $request->student_number,
         ]);
 
         return redirect()->back()->with('success', 'Student created successfully.');

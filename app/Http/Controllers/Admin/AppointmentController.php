@@ -37,6 +37,17 @@ class AppointmentController extends Controller
         return view('admin.appointments.show', compact('appointment'));
     }
 
+    public function showStaff(Appointment $appointment)
+    {
+        $appointment->load([
+            'serviceRequest.student.user',
+            'staff.user',
+            'staff.office'
+        ]);
+
+        return view('staff.appointments.show', compact('appointment'));
+    }
+
     public function cancel(Appointment $appointment)
     {
         $appointment->delete();
@@ -133,6 +144,25 @@ class AppointmentController extends Controller
             'appointment_date' => $request->appointment_date,
             'appointment_time' => $request->appointment_time,
         ]);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Appointment rescheduled successfully.');
+    }
+    public function rescheduleStaff(Request $request, Appointment $appointment)
+    {
+        $request->validate([
+            'appointment_date' => 'required|date|after_or_equal:today',
+            'appointment_time' => 'required'
+        ]);
+
+        $appointment->update([
+            'appointment_date' => $request->appointment_date,
+            'appointment_time' => $request->appointment_time,
+        ]);
+
+        Mail::to($appointment->serviceRequest->student->user->email)
+            ->send(new AppointmentScheduledMail($appointment->serviceRequest));
 
         return redirect()
             ->back()

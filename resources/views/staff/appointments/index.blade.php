@@ -68,7 +68,7 @@
                                                         class="dropdown-menu dropdown-menu-end">
                                                         <ul class="link-list-opt no-bdr">
                                                             <li>
-                                                                <a href="{{ route('sttaff.appointments.show', $appointment) }}">
+                                                                <a href="{{ route('staff.appointments.show', $appointment) }}">
                                                                     <em class="icon ni ni-eye"></em>
                                                                     <span>View Details</span>
                                                                 </a>
@@ -114,7 +114,7 @@
 
             <div class="modal-footer">
                 <form method="POST"
-                    action="{{ route('sttaff.appointments.cancel', $appointment) }}">
+                    action="{{ route('staff.appointments.cancel', $appointment) }}">
                     @csrf
                     @method('PATCH')
 

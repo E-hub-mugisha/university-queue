@@ -31,7 +31,7 @@
                             </div>
                         </form>
 
-                        <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                        <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="true">
                             <thead>
                                 <tr class="nk-tb-item nk-tb-head">
                                     <th class="nk-tb-col">#</th>
@@ -49,7 +49,7 @@
                             <tbody>
                                 @forelse($requests as $index => $req)
                                 <tr class="nk-tb-item">
-                                    <td class="nk-tb-col">{{ $index + 1 + ($requests->currentPage()-1)*$requests->perPage() }}</td>
+                                    <td class="nk-tb-col">{{ $index + 1 }}</td>
                                     <td class="nk-tb-col">{{ $req->request_number }}</td>
                                     <td class="nk-tb-col">{{ $req->student->user->name ?? 'N/A' }}</td>
                                     <td class="nk-tb-col">{{ $req->office->name ?? 'N/A' }}</td>
