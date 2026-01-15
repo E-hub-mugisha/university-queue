@@ -45,6 +45,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
             [AppointmentController::class, 'show']
         )->name('appointments.show');
     });
+
+    Route::get(
+        '/student/complete-profile',
+        [StudentDashboardController::class, 'edit']
+    )->name('student.profile.complete');
+
+    Route::post(
+        '/student/complete-profile',
+        [StudentDashboardController::class, 'update']
+    )->name('student.profile.update');
     // Student routes
     Route::middleware('role:student')->group(function () {
         Route::get('/student/dashboard', [StudentDashboardController::class, 'dashboard']);

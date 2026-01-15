@@ -46,4 +46,11 @@ class Student extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function isProfileComplete(): bool
+    {
+        return filled($this->program)
+            && filled($this->level)
+            && filled($this->phone);
+    }
 }

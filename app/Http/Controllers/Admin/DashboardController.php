@@ -10,23 +10,94 @@ use App\Models\Staff;
 use App\Models\ServiceRequest;
 use App\Models\Office;
 use App\Models\Faculty;
+
 class DashboardController extends Controller
 {
     public function index()
     {
         $user = auth()->user();
 
-        // Common stats
-        $totalRequests = ServiceRequest::count();
-        $pendingRequests = ServiceRequest::whereIn('status', ['Submitted', 'In Review', 'Awaiting Student Response'])->count();
-        $resolvedRequests = ServiceRequest::where('status', 'Resolved')->count();
-        $appointmentRequired = ServiceRequest::where('status', 'Appointment Required')->count();
+        /*
+        |--------------------------------------------------------------------------
+        | 1. Enforce Student Profile Completion (students only)
+        |--------------------------------------------------------------------------
+        */
+        if ($user->role === 'student') {
+            if (! $user->student || ! $user->student->isProfileComplete()) {
+                return redirect()->route('student.profile.complete');
+            }
+        }
 
-        // Graph data - requests per office
-        $requestsPerOffice = Office::withCount('requests')->get();
+        /*
+        |--------------------------------------------------------------------------
+        | 2. Base Query (Role Aware)
+        |--------------------------------------------------------------------------
+        */
+        $requestsQuery = ServiceRequest::query();
 
-        // Graph data - requests per status
-        $requestsPerStatus = ServiceRequest::selectRaw('status, COUNT(*) as count')
+        switch ($user->role) {
+
+            case 'admin':
+                // See everything
+                break;
+
+            case 'staff':
+                // Only requests for staff office
+                $requestsQuery->where('office_id', $user->office_id);
+                break;
+
+            case 'student':
+                // Only own requests
+                $requestsQuery->where('student_id', $user->student->id);
+                break;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 3. Stats
+        |--------------------------------------------------------------------------
+        */
+        $totalRequests = (clone $requestsQuery)->count();
+
+        $pendingRequests = (clone $requestsQuery)
+            ->whereIn('status', [
+                'Submitted',
+                'In Review',
+                'Awaiting Student Response'
+            ])
+            ->count();
+
+        $resolvedRequests = (clone $requestsQuery)
+            ->where('status', 'Resolved')
+            ->count();
+
+        $appointmentRequired = (clone $requestsQuery)
+            ->where('status', 'Appointment Required')
+            ->count();
+
+        /*
+        |--------------------------------------------------------------------------
+        | 4. Graph Data
+        |--------------------------------------------------------------------------
+        */
+
+        // Requests per office
+        $requestsPerOffice = Office::withCount([
+            'requests' => function ($query) use ($user) {
+
+                if ($user->role === 'student') {
+                    $query->where('student_id', $user->student->id);
+                }
+
+                if ($user->role === 'staff') {
+                    $query->where('office_id', $user->office_id);
+                }
+            }
+        ])->get();
+
+        // Requests per status
+        $requestsPerStatus = (clone $requestsQuery)
+            ->selectRaw('status, COUNT(*) as count')
             ->groupBy('status')
             ->pluck('count', 'status');
 

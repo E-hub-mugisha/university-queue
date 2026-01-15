@@ -34,41 +34,37 @@
                     <form method="POST" action="{{ route('student.requests.store') }}" enctype="multipart/form-data">
                         @csrf
 
-                        {{-- Office Selection (Auto-fill if URL has office_id) --}}
+                        {{-- Office Selection --}}
                         <div class="mb-3">
                             <label class="form-label">Office</label>
 
                             <select id="office"
+                                name="office_id"
                                 class="form-select"
-                                {{ request()->has('office_id') ? 'disabled' : '' }}>
+                                {{ request()->has('office_id') ? 'readonly' : '' }}
+                                required>
                                 <option value="">Select Office</option>
                                 @foreach($offices as $office)
-                                <option value="{{ $office->id }}"
-                                    {{ old('office_id', request('office_id')) == $office->id ? 'selected' : '' }}>
-                                    {{ $office->name }}
-                                </option>
+                                    <option value="{{ $office->id }}"
+                                        {{ old('office_id', request('office_id')) == $office->id ? 'selected' : '' }}>
+                                        {{ $office->name }}
+                                    </option>
                                 @endforeach
                             </select>
 
-                            {{-- Hidden input ensures value is submitted --}}
-                            <input type="hidden"
-                                name="office_id"
-                                value="{{ old('office_id', request('office_id')) }}">
-
                             @error('office_id')
-                            <small class="text-danger">{{ $message }}</small>
+                                <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
 
-
-                        {{-- Service Type Selection --}}
+                        {{-- Service Type --}}
                         <div class="mb-3">
                             <label class="form-label">Service Type</label>
                             <select name="service_type_id" id="service_type" class="form-select" required>
                                 <option value="">Select Service Type</option>
                             </select>
                             @error('service_type_id')
-                            <small class="text-danger">{{ $message }}</small>
+                                <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
 
@@ -86,7 +82,7 @@
                             <label class="form-label">Description (Optional)</label>
                             <textarea name="description" class="form-control" rows="4">{{ old('description') }}</textarea>
                             @error('description')
-                            <small class="text-danger">{{ $message }}</small>
+                                <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
 
@@ -96,7 +92,7 @@
                             <input type="file" name="attachments[]" class="form-control" multiple>
                             <small class="text-muted">PDF, Images, Docs | Max 5MB each</small>
                             @error('attachments.*')
-                            <small class="text-danger">{{ $message }}</small>
+                                <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
 
@@ -117,41 +113,47 @@
 
 {{-- Scripts --}}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const officeSelect = document.getElementById('office');
-        const serviceSelect = document.getElementById('service_type');
-        const selectedOffice = officeSelect.value;
+document.addEventListener('DOMContentLoaded', function() {
 
-        // Function to fetch service types
-        function fetchServiceTypes(officeId, selectedService = null) {
-            serviceSelect.innerHTML = '<option value="">Loading...</option>';
-            serviceSelect.disabled = true;
+    const officeSelect = document.getElementById('office');
+    const serviceSelect = document.getElementById('service_type');
 
-            fetch(`/api/service-types/${officeId}`)
-                .then(res => res.json())
-                .then(data => {
-                    serviceSelect.innerHTML = '<option value="">Select Service Type</option>';
-                    data.forEach(type => {
-                        const selected = selectedService == type.id ? 'selected' : '';
-                        serviceSelect.innerHTML += `<option value="${type.id}" ${selected}>${type.name}</option>`;
-                    });
-                    serviceSelect.disabled = false;
-                })
-                .catch(() => {
-                    serviceSelect.innerHTML = '<option value="">Select Service Type</option>';
-                    serviceSelect.disabled = false;
+    // Determine initial office (from query string or selected value)
+    let selectedOffice = officeSelect.value || "{{ request('office_id') }}";
+
+    // Fetch service types
+    function fetchServiceTypes(officeId, selectedService = null) {
+        if (!officeId) return;
+
+        serviceSelect.innerHTML = '<option value="">Loading...</option>';
+        serviceSelect.disabled = true;
+
+        fetch(`/api/service-types/${officeId}`)
+            .then(res => res.json())
+            .then(data => {
+                serviceSelect.innerHTML = '<option value="">Select Service Type</option>';
+                data.forEach(type => {
+                    const selected = selectedService == type.id ? 'selected' : '';
+                    serviceSelect.innerHTML += `<option value="${type.id}" ${selected}>${type.name}</option>`;
                 });
-        }
+                serviceSelect.disabled = false;
+            })
+            .catch(() => {
+                serviceSelect.innerHTML = '<option value="">Select Service Type</option>';
+                serviceSelect.disabled = false;
+            });
+    }
 
-        // Initial fetch if office preselected
-        if (selectedOffice) {
-            fetchServiceTypes(selectedOffice, "{{ old('service_type_id') }}");
-        }
+    // Initial fetch if office preselected
+    if (selectedOffice) {
+        fetchServiceTypes(selectedOffice, "{{ old('service_type_id') }}");
+    }
 
-        // Fetch on change
-        officeSelect.addEventListener('change', function() {
-            fetchServiceTypes(this.value);
-        });
+    // Fetch on office change
+    officeSelect.addEventListener('change', function() {
+        fetchServiceTypes(this.value);
     });
+
+});
 </script>
 @endsection

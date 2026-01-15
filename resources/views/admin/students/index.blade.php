@@ -10,14 +10,14 @@
                 <div class="nk-block-head">
                     <div class="nk-block-head-content">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4 class="nk-block-title">Students</h3>
-                                <div class="d-flex gap-2">
-                                    @if(session('success'))
+                            <h4 class="nk-block-title">Students</h4>
+                            <div class="d-flex gap-2">
+                                @if(session('success'))
                                     <div class="alert alert-success">{{ session('success') }}</div>
-                                    @endif
+                                @endif
 
-                                    <button class="btn btn-primary mb-3 p-3" data-bs-toggle="modal" data-bs-target="#studentModal" onclick="resetForm()">Add Student</button>
-                                </div>
+                                <button class="btn btn-primary mb-3 p-3" data-bs-toggle="modal" data-bs-target="#studentModal" onclick="resetForm()">Add Student</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -25,12 +25,12 @@
                 <!-- Students Table -->
                 <div class="card card-bordered card-preview">
                     <div class="card-inner">
-                        <table class="datatable-init nowrap nk-tb-list nk-tb-ulist"
-                            data-auto-responsive="false">
+                        <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false">
                             <thead>
                                 <tr class="nk-tb-item nk-tb-head">
                                     <th class="nk-tb-col">Student No</th>
-                                    <th class="nk-tb-col">User</th>
+                                    <th class="nk-tb-col">Name</th>
+                                    <th class="nk-tb-col">Email</th>
                                     <th class="nk-tb-col">Program</th>
                                     <th class="nk-tb-col">Level</th>
                                     <th class="nk-tb-col">Phone</th>
@@ -43,6 +43,7 @@
                                 <tr class="nk-tb-item">
                                     <td class="nk-tb-col">{{ $s->student_number }}</td>
                                     <td class="nk-tb-col">{{ $s->user->name }}</td>
+                                    <td class="nk-tb-col">{{ $s->user->email }}</td>
                                     <td class="nk-tb-col">{{ $s->program }}</td>
                                     <td class="nk-tb-col">{{ $s->level }}</td>
                                     <td class="nk-tb-col">{{ $s->phone }}</td>
@@ -50,19 +51,16 @@
                                         <ul class="nk-tb-actions gx-1">
                                             <li>
                                                 <div class="drodown">
-                                                    <a href="#"
-                                                        class="dropdown-toggle btn btn-icon btn-trigger"
-                                                        data-bs-toggle="dropdown">
+                                                    <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown">
                                                         <em class="icon ni ni-more-h"></em>
                                                     </a>
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <ul class="link-list-opt no-bdr">
                                                             <li>
                                                                 <a role="button" class="text-warning" data-bs-toggle="modal" data-bs-target="#studentModal"
-                                                                    onclick="editStudent({{ $s->id }}, '{{ $s->program }}', '{{ $s->level }}', '{{ $s->phone }}')">Edit</a>
+                                                                    onclick="editStudent({{ $s->id }}, '{{ $s->user->name }}', '{{ $s->user->email }}', '{{ $s->program }}', '{{ $s->level }}', '{{ $s->phone }}')">Edit</a>
                                                             </li>
                                                             <li>
-                                                                <!-- Delete Student -->
                                                                 <a role="button" class="text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $s->id }}">Delete</a>
                                                             </li>
                                                         </ul>
@@ -77,6 +75,7 @@
                         </table>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -105,6 +104,8 @@
     </div>
 </div>
 @endforeach
+
+
 <!-- Student Modal -->
 <div class="modal fade" id="studentModal">
     <div class="modal-dialog">
@@ -121,26 +122,40 @@
                 <div class="modal-body">
 
                     <div class="mb-2">
-                        <label>User</label>
-                        <select name="user_id" class="form-control" required>
-                            <option value="">Select Student User</option>
-                            @foreach($users as $u)
-                            <option value="{{ $u->id }}">{{ $u->name }} ({{ $u->email }})</option>
-                            @endforeach
-                        </select>
+                        <label>Full Name</label>
+                        <input class="form-control" name="name" id="name" placeholder="Full Name" required>
                     </div>
+
+                    <div class="mb-2">
+                        <label>Email</label>
+                        <input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
+                    </div>
+
+                    <div class="mb-2">
+                        <label>Password</label>
+                        <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+                    </div>
+
+                    <div class="mb-2">
+                        <label>Confirm Password</label>
+                        <input type="password" class="form-control" name="password_confirmation" id="password_confirmation" placeholder="Confirm Password" required>
+                    </div>
+
                     <div class="mb-2">
                         <label>Program</label>
-                        <input class="form-control mb-2" name="program" id="program" placeholder="Program">
+                        <input class="form-control" name="program" id="program" placeholder="Program">
                     </div>
+
                     <div class="mb-2">
                         <label>Level</label>
-                        <input class="form-control mb-2" name="level" id="level" placeholder="Level">
+                        <input class="form-control" name="level" id="level" placeholder="Level">
                     </div>
+
                     <div class="mb-2">
                         <label>Phone</label>
-                        <input class="form-control mb-2" name="phone" id="phone" placeholder="Phone">
+                        <input class="form-control" name="phone" id="phone" placeholder="Phone">
                     </div>
+
                 </div>
 
                 <div class="modal-footer">
@@ -153,19 +168,40 @@
     </div>
 </div>
 
-<script>
-    function resetForm() {
-        document.getElementById('studentForm').action = "{{ route('admin.students.store') }}";
-        document.getElementById('method').value = "POST";
-    }
 
-    function editStudent(id, program, level, phone) {
-        document.getElementById('studentForm').action = "/admin/students/" + id;
-        document.getElementById('method').value = "PUT";
-        document.getElementById('program').value = program;
-        document.getElementById('level').value = level;
-        document.getElementById('phone').value = phone;
-    }
+<script>
+function resetForm() {
+    document.getElementById('studentForm').action = "{{ route('admin.students.store') }}";
+    document.getElementById('method').value = "POST";
+
+    // Clear all fields
+    document.getElementById('name').value = "";
+    document.getElementById('email').value = "";
+    document.getElementById('password').value = "";
+    document.getElementById('password_confirmation').value = "";
+    document.getElementById('program').value = "";
+    document.getElementById('level').value = "";
+    document.getElementById('phone').value = "";
+}
+
+function editStudent(id, name, email, program, level, phone) {
+    document.getElementById('studentForm').action = "/admin/students/" + id;
+    document.getElementById('method').value = "PUT";
+
+    // Populate fields
+    document.getElementById('name').value = name;
+    document.getElementById('email').value = email;
+    document.getElementById('password').value = "";
+    document.getElementById('password_confirmation').value = "";
+    document.getElementById('program').value = program;
+    document.getElementById('level').value = level;
+    document.getElementById('phone').value = phone;
+
+    // Password is optional during edit
+    document.getElementById('password').removeAttribute('required');
+    document.getElementById('password_confirmation').removeAttribute('required');
+}
 </script>
+
 
 @endsection

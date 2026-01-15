@@ -122,6 +122,12 @@
                                     <input type="email" name="email" class="form-control" required>
                                 </div>
 
+                                <!-- Email -->
+                                <div class="mb-3">
+                                    <label class="form-label">Reg Number</label>
+                                    <input type="text" name="student_number" class="form-control" required>
+                                </div>
+
                                 <!-- Password -->
                                 <div class="mb-3">
                                     <label class="form-label">Password</label>
