@@ -19,23 +19,25 @@
     </div>
 
     <!-- QR Codes Table -->
-    <div class="table-responsive shadow-sm rounded">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="table-dark">
-                <tr>
-                    <th>#</th>
-                    <th>Office</th>
-                    <th>QR Code</th>
-                    <th>Actions</th>
+    <div class="card card-bordered card-preview">
+        <div class="card-inner">
+        <table class="datatable-init nowrap nk-tb-list nk-tb-ulist"
+                            data-auto-responsive="true">
+            <thead>
+                <tr class="nk-tb-item nk-tb-head">
+                    <th class="nk-tb-col">#</th>
+                    <th class="nk-tb-col">Office</th>
+                    <th class="nk-tb-col">QR Code</th>
+                    <th class="nk-tb-col">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($offices as $index => $office)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $office->name }}</td>
-                    <td>{!! $office->qrCode !!}</td>
-                    <td>
+                <tr class="nk-tb-item">
+                    <td class="nk-tb-col">{{ $index + 1 }}</td>
+                    <td class="nk-tb-col">{{ $office->name }}</td>
+                    <td class="nk-tb-col">{!! $office->qrCode !!}</td>
+                    <td class="nk-tb-col">
                         <div class="btn-group" role="group">
                             <a href="{{ route('admin.offices.qrcodes.download', $office->id) }}" class="btn btn-sm btn-success">
                                 <i class="bi bi-download"></i>Download

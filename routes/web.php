@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OfficeController;
 use App\Http\Controllers\Admin\FacultyController;
 use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\UserController;
@@ -104,6 +105,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('requests/{serviceRequest}/appointment', [AppointmentController::class, 'store'])->name('appointments.store');
             Route::patch('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
             Route::put('staff/appointments/{appointment}/reschedule', [AppointmentController::class, 'rescheduleStaff'])->name('appointments.reschedule');
+
+            Route::resource('service-types', \App\Http\Controllers\Staff\ServiceTypeController::class)
+                ->only(['index', 'store', 'update', 'destroy']);
         });
 
         Route::prefix('staff')->name('staff.')->group(function () {
@@ -126,6 +130,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
             Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
             Route::post('users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
+            Route::patch('users/{user}/verify', [UserController::class, 'verify'])
+                ->name('users.verify');
         });
 
         Route::prefix('admin')->name('admin.')->group(function () {
@@ -181,6 +187,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('faqs', [FaqController::class, 'store'])->name('faqs.store');
             Route::put('faqs/{faq}', [FaqController::class, 'update'])->name('faqs.update');
             Route::delete('faqs/{faq}', [FaqController::class, 'destroy'])->name('faqs.destroy');
+        });
+
+        Route::prefix('admin')->name('admin.')->group(function () {
+            Route::resource('service-types', \App\Http\Controllers\Admin\ServiceTypeController::class)
+                ->only(['index', 'store', 'update', 'destroy']);
+        });
+
+        Route::prefix('admin')->group(function () {
+            Route::get('/reports', [ReportController::class, 'index'])->name('admin.reports.index');
+            Route::get('/reports/download/pdf', [ReportController::class, 'downloadPdf'])->name('admin.reports.pdf');
+            Route::get('/reports/download/excel', [ReportController::class, 'downloadExcel'])->name('admin.reports.excel');
+            Route::get('/reports/download/csv', [ReportController::class, 'downloadCsv'])->name('admin.reports.csv');
         });
     });
 });

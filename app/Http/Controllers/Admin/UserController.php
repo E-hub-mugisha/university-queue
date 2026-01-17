@@ -89,4 +89,13 @@ class UserController extends Controller
 
         return back()->with('success', 'Password reset successfully.');
     }
+
+    public function verify(User $user)
+    {
+        $user->update([
+            'email_verified_at' => now(),
+        ]);
+
+        return back()->with('success', 'User verified successfully.');
+    }
 }

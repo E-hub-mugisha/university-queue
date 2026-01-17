@@ -71,7 +71,7 @@
                     </li>
                     <li class="nk-menu-item">
                         <a href="{{ route('admin.offices.qrcodes') }}" class="nk-menu-link {{ activeClass('admin.offices.qrcodes') }}">
-                            <span class="nk-menu-icon"><em class="icon ni ni-qrcode"></em></span>
+                            <span class="nk-menu-icon"><em class="icon ni ni-building"></em></span>
                             <span class="nk-menu-text">Office QR Codes</span>
                         </a>
                     </li>
@@ -90,6 +90,12 @@
                         </a>
                     </li>
 
+                    <li class="nk-menu-item">
+                        <a href="{{ route('admin.service-types.index') }}" class="nk-menu-link {{ activeClass('admin.service-types.*') }}">
+                            <span class="nk-menu-icon"><em class="icon ni ni-list-check"></em></span>
+                            <span class="nk-menu-text">service types</span>
+                        </a>
+                    </li>
                     <li class="nk-menu-item">
                         <a href="{{ route('admin.requests.index') }}" class="nk-menu-link {{ activeClass('admin.requests.*') }}">
                             <span class="nk-menu-icon"><em class="icon ni ni-list-check"></em></span>
@@ -110,12 +116,27 @@
                             <span class="nk-menu-text">FAQs</span>
                         </a>
                     </li>
+
+                    <li class="nk-menu-item">
+                        <a href="{{ route('admin.reports.index') }}" class="nk-menu-link {{ activeClass('admin.reports.*') }}">
+                            <span class="nk-menu-icon"><em class="icon ni ni-report"></em></span>
+                            <span class="nk-menu-text">Reports</span>
+                        </a>
+                    </li>
+
                     @endif
 
                     {{-- Staff Menus --}}
                     @if($role === 'staff')
                     <li class="nk-menu-heading">
                         <h6 class="overline-title text-primary-alt">Staff</h6>
+                    </li>
+
+                    <li class="nk-menu-item">
+                        <a href="{{ route('staff.service-types.index') }}" class="nk-menu-link {{ activeClass('staff.service-types.*') }}">
+                            <span class="nk-menu-icon"><em class="icon ni ni-list-check"></em></span>
+                            <span class="nk-menu-text">service types</span>
+                        </a>
                     </li>
 
                     <li class="nk-menu-item">

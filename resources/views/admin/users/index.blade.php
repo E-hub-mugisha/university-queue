@@ -68,6 +68,16 @@
                                                                 <a role="button" class="text-warning" data-bs-toggle="modal" data-bs-target="#userModal"
                                                                     onclick="editUser({{ $user->id }}, '{{ $user->name }}', '{{ $user->email }}', '{{ $user->role }}')">Edit</a>
                                                             </li>
+                                                            @if(!$user->email_verified_at)
+                                                            <li>
+                                                                <a role="button"
+                                                                    class="text-success"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#verifyUserModal{{ $user->id }}">
+                                                                    <i class="bi bi-patch-check"></i> Verify
+                                                                </a>
+                                                            </li>
+                                                            @endif
                                                             <li>
                                                                 <!-- Disable / Enable -->
                                                                 <a role="button" class="{{ $user->is_active ? 'text-warning' : 'text-success' }}"
@@ -107,6 +117,44 @@
     </div>
 </div>
 @foreach($users as $user)
+<div class="modal fade" id="verifyUserModal{{ $user->id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-shield-check"></i> Verify User
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body text-center">
+                <p>
+                    Are you sure you want to verify this user?
+                </p>
+
+                <h6 class="fw-bold">{{ $user->name }}</h6>
+                <small class="text-muted">{{ $user->email }}</small>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancel
+                </button>
+
+                <form method="POST" action="{{ route('admin.users.verify', $user) }}">
+                    @csrf
+                    @method('PATCH')
+                    <button class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Verify User
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="statusModal{{ $user->id }}" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
