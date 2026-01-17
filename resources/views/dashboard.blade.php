@@ -75,21 +75,37 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     // Requests by Office
-    const deptCtx = document.getElementById('officeChart').getContext('2d');
+    document.addEventListener('DOMContentLoaded', function () {
+
+    const officeCanvas = document.getElementById('officeChart');
+    if (!officeCanvas) return;
+
+    const deptCtx = officeCanvas.getContext('2d');
+
     new Chart(deptCtx, {
         type: 'bar',
         data: {
             labels: {!! json_encode($requestsPerOffice->pluck('name')) !!},
             datasets: [{
-                label: '# of Requests',
-                data: {!! json_encode($requestsPerOffice->pluck('service_requests_count')) !!},
+                label: 'Number of Requests',
+                data: {!! json_encode($requestsPerOffice->pluck('requests_count')) !!},
                 backgroundColor: 'rgba(67, 94, 190, 0.7)',
                 borderColor: 'rgba(67, 94, 190, 1)',
                 borderWidth: 1
             }]
         },
-        options: { scales: { y: { beginAtZero: true } } }
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { precision: 0 }
+                }
+            }
+        }
     });
+
+});
 
     // Requests by Status
     const statusCtx = document.getElementById('statusChart').getContext('2d');

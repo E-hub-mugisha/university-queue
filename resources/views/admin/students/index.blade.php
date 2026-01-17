@@ -38,7 +38,7 @@
                 <!-- Students Table -->
                 <div class="card card-bordered card-preview">
                     <div class="card-inner">
-                        <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                        <table class="datatable-init nowrap nk-tb-list nk-tb-ulist" data-auto-responsive="true">
                             <thead>
                                 <tr class="nk-tb-item nk-tb-head">
                                     <th class="nk-tb-col">Student No</th>
