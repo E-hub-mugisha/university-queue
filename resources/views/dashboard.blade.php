@@ -37,7 +37,7 @@
         <div class="col-md-3 mb-3">
             <div class="card text-white bg-secondary shadow">
                 <div class="card-body">
-                    <h5>Appointment Required</h5>
+                    <h5>Appointment Scheduled</h5>
                     <h3>{{ $appointmentRequired }}</h3>
                 </div>
             </div>

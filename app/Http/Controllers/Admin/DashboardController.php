@@ -43,7 +43,7 @@ class DashboardController extends Controller
 
             case 'staff':
                 // Only requests for staff office
-                $requestsQuery->where('office_id', $user->office_id);
+                $requestsQuery->where('office_id', $user->staff->office->id);
                 break;
 
             case 'student':
@@ -72,7 +72,7 @@ class DashboardController extends Controller
             ->count();
 
         $appointmentRequired = (clone $requestsQuery)
-            ->where('status', 'Appointment Required')
+            ->where('status', 'Appointment Scheduled')
             ->count();
 
         /*
@@ -90,7 +90,7 @@ class DashboardController extends Controller
                 }
 
                 if ($user->role === 'staff') {
-                    $query->where('office_id', $user->office_id);
+                    $query->where('office_id', $user->staff->office->id);
                 }
             }
         ])->get();
