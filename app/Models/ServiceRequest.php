@@ -65,7 +65,17 @@ class ServiceRequest extends Model
     }
 
     public function getWaitingTimeAttribute()
-    {
-        return Carbon::parse($this->queued_at)->diffForHumans(null, true);
+{
+    // Submission time = created_at
+    $startTime = $this->created_at;
+
+    // If the request is resolved, stop counting at resolution time
+    if ($this->status === 'Resolved' && $this->updated_at) {
+        return $startTime->diffForHumans($this->updated_at, true);
     }
+
+    // Otherwise, keep counting until now
+    return $startTime->diffForHumans(now(), true);
+}
+
 }

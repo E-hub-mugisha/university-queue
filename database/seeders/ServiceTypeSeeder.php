@@ -17,7 +17,7 @@ class ServiceTypeSeeder extends Seeder
         $hod       = Office::where('name', 'Head of Department (HOD)')->first();
         $dean      = Office::where('name', 'Dean Office')->first();
         $studentAffairs = Office::where('name', 'Student Affairs')->first();
-
+        
         $services = [
 
             // Finance services
@@ -58,6 +58,7 @@ class ServiceTypeSeeder extends Seeder
             ['office' => $studentAffairs, 'name' => 'Counseling Appointment'],
             ['office' => $studentAffairs, 'name' => 'Student Welfare Issue'],
             ['office' => $studentAffairs, 'name' => 'Disciplinary Appeal'],
+
         ];
 
         foreach ($services as $service) {

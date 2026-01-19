@@ -30,7 +30,7 @@
                             <label class="form-label">Level</label>
                             <select name="level" class="form-select" required>
                                 <option value="">Select level</option>
-                                @foreach (['Year 1','Year 2','Year 3','Year 4'] as $level)
+                                @foreach (['Year 1','Year 2','Year 3'] as $level)
                                     <option value="{{ $level }}"
                                         @selected(old('level', $student->level) === $level)>
                                         {{ $level }}

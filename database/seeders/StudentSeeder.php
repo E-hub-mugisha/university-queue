@@ -32,7 +32,7 @@ class StudentSeeder extends Seeder
                 'name' => 'Patrick Habimana',
                 'email' => 'patrick.habimana@student.university.edu',
                 'program' => 'BEng Electrical Engineering',
-                'level' => 'Year 4',
+                'level' => 'Year 3',
                 'phone' => '0789003333',
             ],
             [

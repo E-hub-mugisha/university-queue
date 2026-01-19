@@ -24,15 +24,15 @@ class StaffSeeder extends Seeder
         $staffMembers = [
             [
                 'name' => 'Dr. Jean Claude Niyonzima',
-                'email' => 'jc.niyonzima@university.edu',
+                'email' => 'jc.niyonzima@unilak.com',
                 'role' => 'staff',
                 'office_id' => $dean?->id,
-                'position' => 'Dean of Faculty of Science',
+                'position' => 'Dean of Faculty of IT',
                 'phone' => '0788123456',
             ],
             [
                 'name' => 'Ms. Alice Uwimana',
-                'email' => 'alice.uwimana@university.edu',
+                'email' => 'alice.uwimana@unilak.com',
                 'role' => 'staff',
                 'office_id' => $finance?->id,
                 'position' => 'Finance Officer',
@@ -40,7 +40,7 @@ class StaffSeeder extends Seeder
             ],
             [
                 'name' => 'Mr. Patrick Habimana',
-                'email' => 'patrick.habimana@university.edu',
+                'email' => 'patrick.habimana@unilak.com',
                 'role' => 'staff',
                 'office_id' => $registrar?->id,
                 'position' => 'Registrar Officer',
@@ -48,7 +48,7 @@ class StaffSeeder extends Seeder
             ],
             [
                 'name' => 'Eng. Samuel Mugabo',
-                'email' => 'samuel.mugabo@university.edu',
+                'email' => 'samuel.mugabo@unilak.com',
                 'role' => 'staff',
                 'office_id' => $it?->id,
                 'position' => 'IT Support Lead',
@@ -56,7 +56,7 @@ class StaffSeeder extends Seeder
             ],
             [
                 'name' => 'Dr. Grace Mukamana',
-                'email' => 'grace.mukamana@university.edu',
+                'email' => 'grace.mukamana@unilak.edu',
                 'role' => 'staff',
                 'office_id' => $hod?->id,
                 'position' => 'Head of Department – Engineering',
@@ -64,7 +64,7 @@ class StaffSeeder extends Seeder
             ],
             [
                 'name' => 'Mr. Emmanuel Nkurunziza',
-                'email' => 'emmanuel.nkurunziza@university.edu',
+                'email' => 'emmanuel.nkurunziza@unilak.com',
                 'role' => 'staff',
                 'office_id' => $hod?->id,
                 'position' => 'Head of Department – Business',
