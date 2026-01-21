@@ -42,7 +42,7 @@ class AdminServiceRequestController extends Controller
         $r->validate([
             'message' => 'required|string',
             'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx',
-            'status' => 'required|in:Submitted,In Review,Awaiting Student Response,Appointment Required,Resolved,Closed'
+            'status' => 'required|in:Submitted,In Review,Awaiting Student Response,Appointment Required,Appointment Scheduled,Resolved,Closed'
         ]);
 
         $filePath = null;

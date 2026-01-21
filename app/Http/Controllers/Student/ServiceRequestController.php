@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Mail\OfficeNewRequestMail;
 use App\Mail\RequestRepliedMail;
+use App\Mail\RequestSubmittedMail;
 use App\Models\Office;
 use App\Models\RequestAttachment;
 use App\Models\ServiceRequest;
 use App\Models\ServiceRequestReply;
+use App\Models\Staff;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -69,6 +72,24 @@ class ServiceRequestController extends Controller
                 ]);
             }
         }
+
+        // 1️⃣ Notify student
+        Mail::to(Auth::user()->email)
+            ->send(new RequestSubmittedMail($serviceRequest));
+
+        /** -------------------------
+     * 2️⃣ Notify Staff in Office
+     * ------------------------- */
+    $staffMembers = Staff::with('user')
+        ->where('office_id', $request->office_id)
+        ->get();
+
+    foreach ($staffMembers as $staff) {
+        if ($staff->user && $staff->user->email) {
+            Mail::to($staff->user->email)
+                ->send(new OfficeNewRequestMail($serviceRequest));
+        }
+    }
 
         return back()->with('success', 'Request submitted successfully!');
     }

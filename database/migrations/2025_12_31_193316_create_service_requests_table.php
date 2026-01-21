@@ -29,6 +29,7 @@ return new class extends Migration
                 'In Review',
                 'Awaiting Student Response',
                 'Appointment Required',
+                'Appointment Scheduled',
                 'Resolved',
                 'Closed'
             ])->default('Submitted');
