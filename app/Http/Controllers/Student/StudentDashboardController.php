@@ -26,12 +26,11 @@ class StudentDashboardController extends Controller
     {
         $request->validate([
             'program' => 'required|string|max:255',
-            'level'   => 'required|string|max:50',
             'phone'   => 'required|string|max:20',
         ]);
 
         auth()->user()->student->update(
-            $request->only('program', 'level', 'phone')
+            $request->only('program', 'phone')
         );
 
         return redirect()->route('dashboard')

@@ -26,19 +26,6 @@
                                    required>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Level</label>
-                            <select name="level" class="form-select" required>
-                                <option value="">Select level</option>
-                                @foreach (['Year 1','Year 2','Year 3'] as $level)
-                                    <option value="{{ $level }}"
-                                        @selected(old('level', $student->level) === $level)>
-                                        {{ $level }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
                         <div class="mb-4">
                             <label class="form-label">Phone</label>
                             <input type="text" name="phone"

@@ -13,7 +13,6 @@ class Student extends Model
         'student_number',
         'user_id',
         'program',
-        'level',
         'phone'
     ];
 

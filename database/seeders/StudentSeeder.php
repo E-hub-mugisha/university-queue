@@ -18,35 +18,30 @@ class StudentSeeder extends Seeder
                 'name' => 'Eric Mugisha',
                 'email' => 'eric.mugisha@student.university.edu',
                 'program' => 'BSc Information Technology',
-                'level' => 'Year 3',
                 'phone' => '0789001111',
             ],
             [
                 'name' => 'Aline Uwase',
                 'email' => 'aline.uwase@student.university.edu',
                 'program' => 'BSc Computer Science',
-                'level' => 'Year 2',
                 'phone' => '0789002222',
             ],
             [
                 'name' => 'Patrick Habimana',
                 'email' => 'patrick.habimana@student.university.edu',
                 'program' => 'BEng Electrical Engineering',
-                'level' => 'Year 3',
                 'phone' => '0789003333',
             ],
             [
                 'name' => 'Chantal Mukamana',
                 'email' => 'chantal.mukamana@student.university.edu',
                 'program' => 'BBA Finance',
-                'level' => 'Year 1',
                 'phone' => '0789004444',
             ],
             [
                 'name' => 'Jean Paul Niyonzima',
                 'email' => 'jeanpaul.niyonzima@student.university.edu',
                 'program' => 'BSc Mathematics',
-                'level' => 'Year 3',
                 'phone' => '0789005555',
             ],
         ];
@@ -73,7 +68,6 @@ class StudentSeeder extends Seeder
                 [
                     'student_number' => $studentNumber,
                     'program' => $data['program'],
-                    'level' => $data['level'],
                     'phone' => $data['phone'],
                 ]
             );

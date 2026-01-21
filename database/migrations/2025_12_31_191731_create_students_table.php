@@ -20,7 +20,6 @@ return new class extends Migration
                 ->onDelete('cascade');
 
             $table->string('program')->nullable();
-            $table->string('level')->nullable();
             $table->string('phone')->nullable();
 
             $table->timestamps();
