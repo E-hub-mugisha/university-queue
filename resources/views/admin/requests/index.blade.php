@@ -11,6 +11,19 @@
                     <div class="nk-block-head-content">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4 class="nk-block-title">All Student Service Requests</h4>
+                            @if(in_array($serviceRequest->status, ['Resolved', 'Closed']))
+                            <form
+                                action="{{ route('service-requests.archive', $serviceRequest->id) }}"
+                                method="POST"
+                                class="d-inline"
+                                onsubmit="return confirm('Are you sure you want to archive this request?');">
+                                @csrf
+                                <button class="btn btn-sm btn-warning">
+                                    🗄 Archive
+                                </button>
+                            </form>
+                            @endif
+
                         </div>
                     </div>
                 </div>

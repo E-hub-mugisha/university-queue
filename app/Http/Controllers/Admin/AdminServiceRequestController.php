@@ -67,4 +67,19 @@ class AdminServiceRequestController extends Controller
 
         return back()->with('success', 'Reply sent successfully.');
     }
+
+    public function archive(ServiceRequest $serviceRequest)
+    {
+        // Allow only Resolved or Closed requests
+        if (!in_array($serviceRequest->status, ['Resolved', 'Closed'])) {
+            return back()->with('error', 'Only resolved or closed requests can be archived.');
+        }
+
+        $serviceRequest->update([
+            'status' => 'Archived',
+            'archived_at' => now(),
+        ]);
+
+        return back()->with('success', 'Request archived successfully.');
+    }
 }

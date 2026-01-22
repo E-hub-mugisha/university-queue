@@ -200,6 +200,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/reports/download/excel', [ReportController::class, 'downloadExcel'])->name('admin.reports.excel');
             Route::get('/reports/download/csv', [ReportController::class, 'downloadCsv'])->name('admin.reports.csv');
         });
+
+        Route::post('/service-requests/{serviceRequest}/archive', [AdminServiceRequestController::class, 'archive'])->name('service-requests.archive');
     });
 });
 
