@@ -9,15 +9,20 @@ use Carbon\Carbon;
 class ArchiveOldServiceRequests extends Command
 {
     protected $signature = 'requests:archive-old';
-    protected $description = 'Archive resolved or closed service requests older than one month';
+    protected $description = 'Archive resolved or closed requests older than 30 days';
 
     public function handle()
     {
-        $count = ServiceRequest::archivable()->update([
-            'status' => 'Archived',
-            'archived_at' => now(),
-        ]);
+        $count = ServiceRequest::whereIn('status', ['Resolved', 'Closed'])
+            ->where('is_archived', false)
+            ->where('updated_at', '<=', Carbon::now()->subDays(30))
+            ->update([
+                'is_archived' => true,
+                'archived_at' => now(),
+            ]);
 
-        $this->info("Archived {$count} resolved/closed service requests.");
+        $this->info("Archived {$count} old service requests.");
+
+        return Command::SUCCESS;
     }
 }

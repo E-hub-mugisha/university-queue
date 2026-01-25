@@ -11,23 +11,19 @@
                     <div class="nk-block-head-content">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4 class="nk-block-title">All Student Service Requests</h4>
-                            @if(in_array($serviceRequest->status, ['Resolved', 'Closed']))
-                            <form
-                                action="{{ route('service-requests.archive', $serviceRequest->id) }}"
-                                method="POST"
-                                class="d-inline"
-                                onsubmit="return confirm('Are you sure you want to archive this request?');">
-                                @csrf
-                                <button class="btn btn-sm btn-warning">
-                                    🗄 Archive
-                                </button>
-                            </form>
-                            @endif
-
                         </div>
                     </div>
                 </div>
-
+                <!-- Validation Errors -->
+                @if ($errors->any())
+                <div class="alert alert-danger small">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
                 <div class="card shadow-sm">
                     <div class="card-inner">
                         <form method="GET" class="row g-2 mb-3">
@@ -92,6 +88,55 @@
                                         <a href="{{ route('admin.requests.show', $req->id) }}" class="btn btn-sm btn-outline-dark">
                                             View
                                         </a>
+                                        @if(in_array($req->status, ['Resolved', 'Closed']))
+                                        <button class="btn btn-sm btn-warning"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#archiveModal{{ $req->id }}">
+                                            <i class="bi bi-archive"></i> Archive
+                                        </button>
+
+                                        @endif
+                                        <div class="modal fade" id="archiveModal{{ $req->id }}" tabindex="-1">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title text-warning">
+                                                            <i class="bi bi-exclamation-triangle"></i> Confirm Archive
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+
+                                                    <div class="modal-body">
+                                                        <p>
+                                                            Are you sure you want to archive this request?
+                                                        </p>
+                                                        <p class="text-muted mb-0">
+                                                            <strong>Request ID:</strong> {{ $req->request_number }}
+                                                        </p>
+                                                        <small class="text-danger">
+                                                            This will remove it from active requests.
+                                                        </small>
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                            Cancel
+                                                        </button>
+
+                                                        <form action="{{ route('admin.requests.archive', $req->id) }}"
+                                                            method="POST">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-warning">
+                                                                <i class="bi bi-archive"></i> Yes, Archive
+                                                            </button>
+                                                        </form>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </td>
                                 </tr>
                                 @empty

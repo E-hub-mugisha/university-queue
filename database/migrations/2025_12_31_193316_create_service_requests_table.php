@@ -31,7 +31,8 @@ return new class extends Migration
                 'Appointment Required',
                 'Appointment Scheduled',
                 'Resolved',
-                'Closed'
+                'Closed',
+                'Archived'
             ])->default('Submitted');
 
             $table->enum('priority', ['normal', 'urgent'])->default('normal');

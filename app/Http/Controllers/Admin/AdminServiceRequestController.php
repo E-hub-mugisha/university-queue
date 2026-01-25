@@ -68,18 +68,43 @@ class AdminServiceRequestController extends Controller
         return back()->with('success', 'Reply sent successfully.');
     }
 
-    public function archive(ServiceRequest $serviceRequest)
+    public function archive($id)
     {
+        $serviceRequest = ServiceRequest::findOrFail($id);
         // Allow only Resolved or Closed requests
         if (!in_array($serviceRequest->status, ['Resolved', 'Closed'])) {
             return back()->with('error', 'Only resolved or closed requests can be archived.');
         }
 
+        if ($serviceRequest->is_archived) {
+            return back()->with('warning', 'Request is already archived.');
+        }
+
         $serviceRequest->update([
             'status' => 'Archived',
+            'is_archived' => true,
             'archived_at' => now(),
         ]);
 
         return back()->with('success', 'Request archived successfully.');
+    }
+
+    public function archived()
+    {
+        $requests = ServiceRequest::archived()
+            ->latest('archived_at')
+            ->paginate(15);
+
+        return view('admin.requests.archive', compact('requests'));
+    }
+
+    public function restore(ServiceRequest $request)
+    {
+        $request->update([
+            'is_archived' => false,
+            'archived_at' => null,
+        ]);
+
+        return back()->with('success', 'Request restored successfully.');
     }
 }

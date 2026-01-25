@@ -13,7 +13,15 @@ class ServiceRequest extends Model
         'office_id',
         'service_type_id',
         'description',
-        'status'
+        'status',
+        'is_archived',
+        'archived_at',
+    ];
+
+    protected $casts = [
+        'archived_at' => 'datetime',
+        'created_at'  => 'datetime',
+        'updated_at'  => 'datetime',
     ];
 
     protected static function boot()
@@ -78,11 +86,23 @@ class ServiceRequest extends Model
         return $startTime->diffForHumans(now(), true);
     }
 
-    // app/Models/ServiceRequest.php
-
+    // Requests that CAN be archived (older than 30 days & resolved/closed)
     public function scopeArchivable($query)
     {
         return $query->whereIn('status', ['Resolved', 'Closed'])
-            ->where('updated_at', '<=', now()->subMonth());
+            ->where('updated_at', '<=', now()->subDays(30))
+            ->where('is_archived', false);
+    }
+
+    // Active requests (default)
+    public function scopeActive($query)
+    {
+        return $query->where('is_archived', false);
+    }
+
+    // Archived requests ✅ REQUIRED
+    public function scopeArchived($query)
+    {
+        return $query->where('is_archived', true);
     }
 }

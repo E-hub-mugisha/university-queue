@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('service_requests', function (Blueprint $table) {
+            $table->boolean('is_archived')->default(false)->index();
             $table->timestamp('archived_at')->nullable()->after('status');
         });
     }

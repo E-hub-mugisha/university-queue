@@ -102,6 +102,13 @@
                             <span class="nk-menu-text">All Requests</span>
                         </a>
                     </li>
+                    <li class="nk-menu-item">
+                        <a href="{{ route('admin.requests.archived') }}"
+                            class="nk-menu-link {{ activeClass('admin.requests.archived') }}">
+                            <span class="nk-menu-icon"><em class="icon ni ni-archive"></em></span>
+                            <span class="nk-menu-text">Archived Requests</span>
+                        </a>
+                    </li>
 
                     <li class="nk-menu-item">
                         <a href="{{ route('admin.appointments.index') }}" class="nk-menu-link {{ activeClass('admin.appointments.*') }}">

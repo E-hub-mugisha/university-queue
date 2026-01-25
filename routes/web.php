@@ -110,6 +110,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 ->only(['index', 'store', 'update', 'destroy']);
         });
 
+        Route::get('/staff/requests/archived', [StaffRequestController::class, 'archived'])
+            ->name('staff.requests.archived');
+
         Route::prefix('staff')->name('staff.')->group(function () {
             Route::get('faqs', [FaqController::class, 'index'])->name('faqs.index');
             Route::patch('faqs/{faq}/toggle', [FaqController::class, 'toggle'])->name('faqs.toggle');
@@ -201,7 +204,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/reports/download/csv', [ReportController::class, 'downloadCsv'])->name('admin.reports.csv');
         });
 
-        Route::post('/service-requests/{serviceRequest}/archive', [AdminServiceRequestController::class, 'archive'])->name('service-requests.archive');
+        Route::post('/admin/requests/{id}/archive', [AdminServiceRequestController::class, 'archive'])->name('admin.requests.archive');
+        Route::get('/requests/archived', [AdminServiceRequestController::class, 'archived'])->name('admin.requests.archived');
+        Route::post('/admin/requests/{request}/restore', [AdminServiceRequestController::class, 'restore'])->name('admin.requests.restore');
     });
 });
 
