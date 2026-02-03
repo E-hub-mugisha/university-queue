@@ -78,18 +78,18 @@ class ServiceRequestController extends Controller
             ->send(new RequestSubmittedMail($serviceRequest));
 
         /** -------------------------
-     * 2️⃣ Notify Staff in Office
-     * ------------------------- */
-    $staffMembers = Staff::with('user')
-        ->where('office_id', $request->office_id)
-        ->get();
+         * 2️⃣ Notify Staff in Office
+         * ------------------------- */
+        $staffMembers = Staff::with('user')
+            ->where('office_id', $request->office_id)
+            ->get();
 
-    foreach ($staffMembers as $staff) {
-        if ($staff->user && $staff->user->email) {
-            Mail::to($staff->user->email)
-                ->send(new OfficeNewRequestMail($serviceRequest));
+        foreach ($staffMembers as $staff) {
+            if ($staff->user && $staff->user->email) {
+                Mail::to($staff->user->email)
+                    ->send(new OfficeNewRequestMail($serviceRequest));
+            }
         }
-    }
 
         return back()->with('success', 'Request submitted successfully!');
     }
@@ -98,7 +98,14 @@ class ServiceRequestController extends Controller
 
         $request->load(['office', 'serviceType', 'attachments', 'replies']);
 
-        return view('student.requests.show', compact('request'));
+        $requests = ServiceRequest::where('office_id', $request->office_id)
+            ->whereNull('archived_at')
+            ->whereIn('status', ['Submitted', 'In Review', 'Awaiting Student Response'])
+            ->orderByRaw("FIELD(priority, 'urgent', 'normal')")
+            ->orderBy('queued_at')
+            ->paginate(15);
+
+        return view('student.requests.show', compact('request', 'requests'));
     }
 
     // Reply to request
@@ -131,5 +138,18 @@ class ServiceRequestController extends Controller
             ->send(new RequestRepliedMail($request));
 
         return back()->with('success', 'Reply sent successfully.');
+    }
+
+    public function status(ServiceRequest $request)
+    {
+        $request->load('office');
+
+        return response()->json([
+            'queue_position' => $request->queue_position,
+            'people_ahead' => $request->people_ahead,
+            'estimated_wait' => $request->estimated_wait_time,
+            'currently_serving' => optional($request->currently_serving)->request_number,
+            'status' => $request->status,
+        ]);
     }
 }

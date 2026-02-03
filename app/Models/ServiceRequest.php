@@ -14,8 +14,9 @@ class ServiceRequest extends Model
         'service_type_id',
         'description',
         'status',
-        'is_archived',
         'archived_at',
+        'queued_at',
+        'priority',
     ];
 
     protected $casts = [
@@ -104,5 +105,39 @@ class ServiceRequest extends Model
     public function scopeArchived($query)
     {
         return $query->where('is_archived', true);
+    }
+
+    public function getQueuePositionAttribute()
+    {
+        return self::where('office_id', $this->office_id)
+            ->whereNull('archived_at')
+            ->whereIn('status', ['Submitted', 'In Review', 'Awaiting Student Response'])
+            ->where(function ($q) {
+                $q->where('priority', 'urgent')
+                    ->orWhere('priority', 'normal');
+            })
+            ->where('queued_at', '<', $this->queued_at)
+            ->count() + 1;
+    }
+
+    public function getPeopleAheadAttribute()
+    {
+        return max(0, $this->queue_position - 1);
+    }
+
+    public function getCurrentlyServingAttribute()
+    {
+        return self::where('office_id', $this->office_id)
+            ->whereNull('archived_at')
+            ->whereIn('status', ['In Review'])
+            ->orderByRaw("FIELD(priority, 'urgent', 'normal')")
+            ->orderBy('queued_at')
+            ->first();
+    }
+
+    public function getEstimatedWaitTimeAttribute()
+    {
+        $avgMinutesPerRequest = 5; // You can make this dynamic later
+        return $this->people_ahead * $avgMinutesPerRequest;
     }
 }

@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PublicQueueController;
 use App\Http\Controllers\Staff\StaffDashboardController;
 use App\Http\Controllers\Staff\StaffRequestController;
 use App\Http\Controllers\Student\ServiceRequestController;
@@ -209,6 +210,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/admin/requests/{request}/restore', [AdminServiceRequestController::class, 'restore'])->name('admin.requests.restore');
     });
 });
+
+Route::get('/queue/{office}', [PublicQueueController::class, 'show'])
+    ->name('queue.public.display');
+
+Route::get('/student/requests/{request}/queue-status', [ServiceRequestController::class, 'status'])
+    ->name('student.requests.queueStatus');
 
 Route::get('/seed-admin', function () {
     Artisan::call('db:seed', [
