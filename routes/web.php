@@ -58,8 +58,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         [StudentDashboardController::class, 'edit']
     )->name('student.profile.complete');
 
-    Route::post(
-        '/student/complete-profile',
+    Route::put(
+        '/student/complete-profile/{id}',
         [StudentDashboardController::class, 'update']
     )->name('student.profile.update');
     // Student routes

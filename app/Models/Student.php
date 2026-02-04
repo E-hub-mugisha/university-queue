@@ -49,7 +49,6 @@ class Student extends Model
     public function isProfileComplete(): bool
     {
         return filled($this->program)
-            && filled($this->level)
             && filled($this->phone);
     }
 }

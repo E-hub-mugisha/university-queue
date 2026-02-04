@@ -22,14 +22,15 @@ class StudentDashboardController extends Controller
     }
 
 
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'program' => 'required|string|max:255',
             'phone'   => 'required|string|max:20',
         ]);
 
-        auth()->user()->student->update(
+        $student = \App\Models\Student::where('user_id', $id)->firstOrFail();
+        $student->update(
             $request->only('program', 'phone')
         );
 
