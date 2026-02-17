@@ -25,9 +25,24 @@ class StaffController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
             'office_id' => 'nullable|exists:offices,id',
+            'campus' => 'nullable|string|max:255',
+            'faculty' => 'nullable|string|max:255',
+            'department' => 'nullable|string|max:255',
             'position' => 'nullable|string',
             'phone' => 'nullable|string',
         ]);
+
+        $office = $request->filled('office_id')
+            ? Office::find($request->office_id)
+            : null;
+        $isStudentAffairs = $office && str_contains(strtolower($office->name), 'student affairs');
+
+        if ($isStudentAffairs) {
+            $request->validate([
+                'faculty' => 'required|string|max:255',
+                'department' => 'required|string|max:255',
+            ]);
+        }
 
         // Create user
         $user = User::create([
@@ -41,6 +56,9 @@ class StaffController extends Controller
         Staff::create([
             'user_id' => $user->id,
             'office_id' => $request->office_id,
+            'campus' => $request->campus,
+            'faculty' => $isStudentAffairs ? $request->faculty : null,
+            'department' => $isStudentAffairs ? $request->department : null,
             'position' => $request->position,
             'phone' => $request->phone,
         ]);
@@ -55,9 +73,24 @@ class StaffController extends Controller
             'email' => "required|email|unique:users,email,{$staff->user_id}",
             'password' => 'nullable|string|min:6|confirmed',
             'office_id' => 'nullable|exists:offices,id',
+            'campus' => 'nullable|string|max:255',
+            'faculty' => 'nullable|string|max:255',
+            'department' => 'nullable|string|max:255',
             'position' => 'nullable|string',
             'phone' => 'nullable|string',
         ]);
+
+        $office = $request->filled('office_id')
+            ? Office::find($request->office_id)
+            : null;
+        $isStudentAffairs = $office && str_contains(strtolower($office->name), 'student affairs');
+
+        if ($isStudentAffairs) {
+            $request->validate([
+                'faculty' => 'required|string|max:255',
+                'department' => 'required|string|max:255',
+            ]);
+        }
 
         // Update user
         $user = $staff->user;
@@ -71,6 +104,9 @@ class StaffController extends Controller
         // Update staff details
         $staff->update([
             'office_id' => $request->office_id,
+            'campus' => $request->campus,
+            'faculty' => $isStudentAffairs ? $request->faculty : null,
+            'department' => $isStudentAffairs ? $request->department : null,
             'position' => $request->position,
             'phone' => $request->phone,
         ]);

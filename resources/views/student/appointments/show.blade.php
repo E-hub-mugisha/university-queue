@@ -8,43 +8,30 @@
 $status = strtolower($appointment->serviceRequest->status);
 
 $statusClass = match ($status) {
-'approved' => 'bg-success',
-'pending' => 'bg-warning text-dark',
-'cancelled' => 'bg-danger',
-default => 'bg-secondary',
+    'approved' => 'bg-success',
+    'pending' => 'bg-warning text-dark',
+    'cancelled' => 'bg-danger',
+    default => 'bg-secondary',
 };
 @endphp
 
 <div class="container py-4">
-
-    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="fw-bold mb-0">
             <i class="bi bi-calendar-check text-primary me-2"></i>
             Appointment Details
         </h4>
 
-        <div class="d-flex gap-2">
-
-            <button class="btn btn-warning p-3"
-                data-bs-toggle="modal"
-                data-bs-target="#rescheduleModal">
-                <i class="bi bi-arrow-repeat"></i> Reschedule
-            </button>
-
-            <a href="{{ route('admin.appointments.index') }}"
-                class="btn btn-secondary p-3">
-                <i class="bi bi-arrow-left"></i> Back to Appointments
-            </a>
-        </div>
+        <a href="{{ route('student.appointments.index') }}"
+            class="btn btn-secondary p-3">
+            <i class="bi bi-arrow-left"></i> Back to Appointments
+        </a>
     </div>
 
     <div class="card border-0 shadow-lg rounded-4">
         <div class="card-body p-4">
-
             <div class="row g-4">
 
-                <!-- Appointment Info -->
                 <div class="col-md-6">
                     <div class="card border-0 shadow-sm rounded-3 h-100">
                         <div class="card-body">
@@ -65,7 +52,6 @@ default => 'bg-secondary',
                     </div>
                 </div>
 
-                <!-- Request Info -->
                 <div class="col-md-6">
                     <div class="card border-0 shadow-sm rounded-3 h-100">
                         <div class="card-body">
@@ -85,11 +71,9 @@ default => 'bg-secondary',
                     </div>
                 </div>
 
-                <!-- Student -->
                 <div class="col-md-6">
                     <div class="card border-0 shadow-sm rounded-3 h-100 p-4">
                         <div class="card-body">
-
                             <h6 class="text-primary fw-semibold mb-3">
                                 <i class="bi bi-person-circle me-2"></i>
                                 Student Information
@@ -97,9 +81,9 @@ default => 'bg-secondary',
 
                             <div class="d-flex align-items-center gap-3 mt-3">
                                 <img src="{{ $appointment->serviceRequest->student->avatar
-                        ?? 'https://ui-avatars.com/api/?name=' .
-                        urlencode($appointment->serviceRequest->student->user->name) .
-                        '&background=0D6EFD&color=fff' }}"
+                                    ?? 'https://ui-avatars.com/api/?name=' .
+                                    urlencode($appointment->serviceRequest->student->user->name) .
+                                    '&background=0D6EFD&color=fff' }}"
                                     class="rounded-circle"
                                     width="60" height="60"
                                     alt="Student Avatar">
@@ -113,17 +97,13 @@ default => 'bg-secondary',
                                     </small>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
 
-
-                <!-- Staff -->
                 <div class="col-md-6">
                     <div class="card border-0 shadow-sm rounded-3 h-100 p-4">
                         <div class="card-body">
-
                             <h6 class="text-primary fw-semibold mb-3">
                                 <i class="bi bi-person-badge me-2"></i>
                                 Staff Information
@@ -131,9 +111,9 @@ default => 'bg-secondary',
 
                             <div class="d-flex align-items-center gap-3">
                                 <img src="{{ $appointment->staff->avatar
-                        ?? 'https://ui-avatars.com/api/?name=' .
-                        urlencode($appointment->staff->user->name) .
-                        '&background=198754&color=fff' }}"
+                                    ?? 'https://ui-avatars.com/api/?name=' .
+                                    urlencode($appointment->staff->user->name) .
+                                    '&background=198754&color=fff' }}"
                                     class="rounded-circle"
                                     width="60" height="60"
                                     alt="Staff Avatar">
@@ -147,81 +127,11 @@ default => 'bg-secondary',
                                     </small>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
 
-
             </div>
-
-        </div>
-    </div>
-
-</div>
-
-<!-- Reschedule Modal -->
-<div class="modal fade" id="rescheduleModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-
-            <form method="POST"
-                action="{{ route('admin.appointments.reschedule', $appointment->id) }}">
-                @csrf
-                @method('PUT')
-
-                <div class="modal-header bg-warning bg-opacity-10 border-0 rounded-top-4">
-                    <h5 class="modal-title fw-semibold">
-                        <i class="bi bi-calendar-event me-2"></i>
-                        Reschedule Appointment
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body p-4">
-
-                    <div class="mb-3">
-                        <label class="form-label fw-medium">New Date</label>
-                        <input type="date"
-                            name="appointment_date"
-                            class="form-control"
-                            value="{{ $appointment->appointment_date }}"
-                            min="{{ now()->toDateString() }}"
-                            required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-medium">New Time</label>
-                        <input type="time"
-                            name="appointment_time"
-                            class="form-control"
-                            value="{{ $appointment->appointment_time }}"
-                            required>
-                    </div>
-
-                    <div class="alert alert-info small">
-                        <i class="bi bi-info-circle me-1"></i>
-                        The student and staff will be notified after rescheduling.
-                    </div>
-
-                </div>
-
-                <div class="modal-footer border-0 px-4 pb-4">
-                    <button type="button"
-                        class="btn btn-light"
-                        data-bs-dismiss="modal">
-                        Cancel
-                    </button>
-
-                    <button type="submit"
-                        class="btn btn-warning">
-                        <i class="bi bi-check-circle me-1"></i>
-                        Update Schedule
-                    </button>
-                </div>
-
-            </form>
-
         </div>
     </div>
 </div>

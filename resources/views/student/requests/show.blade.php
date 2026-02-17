@@ -65,14 +65,53 @@
             </div>
 
             <!-- Student Info Card -->
-            <div class="card mb-4 shadow-sm rounded-4 p-3">
-                <div class="d-flex align-items-center gap-3">
-                    <img src="{{ $request->student->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($request->student->user->name) . '&background=0D6EFD&color=fff' }}"
-                        class="rounded-circle" width="70" height="70" alt="Student Avatar">
-                    <div>
-                        <h5 class="mb-0">{{ $request->student->user->name ?? 'N/A' }}</h5>
-                        <p class="mb-0 text-muted">{{ $request->student->user->email ?? 'N/A' }}</p>
-                        <p class="mb-0"><strong>Office:</strong> {{ $request->office->name ?? 'N/A' }}</p>
+            @php
+                $student = $request->student;
+                $user = optional($student)->user;
+                $studentName = $user->name ?? 'N/A';
+                $avatarUrl = $student->avatar
+                    ?? 'https://ui-avatars.com/api/?name=' . urlencode($studentName !== 'N/A' ? $studentName : 'Student') . '&background=0D6EFD&color=fff';
+            @endphp
+            <div class="card mb-4 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <div class="row g-3 align-items-start">
+                        <div class="col-12 col-md-auto text-center">
+                            <img src="{{ $avatarUrl }}"
+                                class="rounded-circle border shadow-sm"
+                                style="width: 84px; height: 84px; object-fit: cover;"
+                                alt="Student Avatar">
+                        </div>
+                        <div class="col">
+                            <h5 class="mb-1">{{ $studentName }}</h5>
+                            <p class="mb-3 text-muted text-break">{{ $user->email ?? 'N/A' }}</p>
+
+                            <div class="row row-cols-1 row-cols-sm-2 g-2">
+                                <div class="col">
+                                    <div class="rounded-3 p-2 h-100">
+                                        <small class="text-muted d-block">Student Number</small>
+                                        <span class="fw-semibold">{{ $student->student_number ?? 'N/A' }}</span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="rounded-3 p-2 h-100">
+                                        <small class="text-muted d-block">Phone</small>
+                                        <span class="fw-semibold text-break">{{ $student->phone ?? 'N/A' }}</span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="rounded-3 p-2 h-100">
+                                        <small class="text-muted d-block">Office</small>
+                                        <span class="fw-semibold">{{ $request->office->name ?? 'N/A' }}</span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="rounded-3 p-2 h-100">
+                                        <small class="text-muted d-block">Department</small>
+                                        <span class="fw-semibold">{{ $student->program ?? 'N/A' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

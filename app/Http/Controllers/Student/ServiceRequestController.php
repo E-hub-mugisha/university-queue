@@ -56,7 +56,7 @@ class ServiceRequestController extends Controller
             'service_type_id' => $request->service_type_id,
             'description' => $request->description,
             'status' => 'Submitted',
-            'priority' => $request->priority ?? 'normal',
+            'priority' => 'normal',
             'queued_at' => now(),
         ]);
 

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Office;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -14,10 +13,7 @@ class StudentController extends Controller
     public function index()
     {
         $students = Student::with(['user'])->get();
-        $users = User::where('role', 'student')->get();
-        $offices = Office::all();
-
-        return view('admin.students.index', compact('students', 'users', 'offices'));
+        return view('admin.students.index', compact('students'));
     }
 
     // Store new student
@@ -27,10 +23,28 @@ class StudentController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
-            'program'  => 'nullable|string|max:255',
-            'level'    => 'nullable|string|max:50',
+            'faculty'  => 'required|string|max:255',
+            'department' => 'required|string|max:255',
+            'campus' => 'required|string|max:255',
             'phone'    => 'nullable|string|max:20',
-            'student_number' => 'nullable|string|unique:students,student_number',
+            'student_number' => [
+                'nullable',
+                'string',
+                'unique:students,student_number',
+                'regex:/^\d{5}\/\d{4}$/',
+                function ($attribute, $value, $fail) {
+                    if (blank($value)) {
+                        return;
+                    }
+
+                    $year = (int) explode('/', $value)[1];
+                    $currentYear = (int) now()->format('Y');
+
+                    if ($year < 1900 || $year > $currentYear) {
+                        $fail('The student number year must be a valid 4-digit year and cannot be in the future.');
+                    }
+                },
+            ],
         ]);
 
         // 1️⃣ Create User
@@ -42,10 +56,13 @@ class StudentController extends Controller
         ]);
 
         // 2️⃣ Create Student linked to user
-        $student = Student::create([
+        Student::create([
             'user_id'        => $user->id,
-            'program'        => $request->program,
-            'level'          => $request->level,
+            'faculty'        => $request->faculty,
+            'department'     => $request->department,
+            // Keep `program` aligned with department for legacy compatibility.
+            'program'        => $request->department,
+            'campus'         => $request->campus,
             'phone'          => $request->phone,
             'student_number' => $request->student_number,
         ]);
@@ -60,8 +77,9 @@ class StudentController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email,' . $student->user_id,
             'password' => 'nullable|string|min:6|confirmed',
-            'program'  => 'nullable|string|max:255',
-            'level'    => 'nullable|string|max:50',
+            'faculty'  => 'required|string|max:255',
+            'department' => 'required|string|max:255',
+            'campus' => 'required|string|max:255',
             'phone'    => 'nullable|string|max:20',
         ]);
 
@@ -79,8 +97,10 @@ class StudentController extends Controller
 
         // Update Student
         $student->update([
-            'program' => $request->program,
-            'level'   => $request->level,
+            'faculty' => $request->faculty,
+            'department' => $request->department,
+            'program' => $request->department,
+            'campus' => $request->campus,
             'phone'   => $request->phone,
         ]);
 

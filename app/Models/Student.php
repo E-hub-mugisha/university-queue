@@ -12,7 +12,10 @@ class Student extends Model
     protected $fillable = [
         'student_number',
         'user_id',
+        'faculty',
+        'department',
         'program',
+        'campus',
         'phone'
     ];
 
@@ -48,7 +51,9 @@ class Student extends Model
 
     public function isProfileComplete(): bool
     {
-        return filled($this->program)
+        return filled($this->faculty)
+            && filled($this->department)
+            && filled($this->campus)
             && filled($this->phone);
     }
 }

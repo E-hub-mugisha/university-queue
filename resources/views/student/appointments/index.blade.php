@@ -13,7 +13,7 @@
                     <div class="nk-block-head-content">
                         <h4 class="nk-block-title">Appointments List</h4>
                         <div class="nk-block-des">
-                            <p>Manage all appointments scheduled by students.</p>
+                            <p>See all appointments scheduled by certain offices and staff.</p>
                         </div>
                     </div>
                 </div>

@@ -11,13 +11,36 @@ use Illuminate\Support\Facades\Mail;
 
 class StaffRequestController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $staff = auth()->user()->staff;
 
-        $requests = ServiceRequest::with(['student.user', 'serviceType'])
+        $requestsQuery = ServiceRequest::with(['student.user', 'serviceType', 'office'])
             ->where('office_id', $staff->office_id)
-            ->orderBy('created_at', 'asc') // Queue order
+            ->whereHas('student', function ($studentQuery) use ($staff) {
+                if (filled($staff->campus)) {
+                    $studentQuery->where('campus', $staff->campus);
+                }
+
+                if (filled($staff->faculty)) {
+                    $studentQuery->where('faculty', $staff->faculty);
+                }
+
+                if (filled($staff->department)) {
+                    $studentQuery->where(function ($q) use ($staff) {
+                        $q->where('department', $staff->department)
+                            ->orWhere('program', $staff->department);
+                    });
+                }
+            });
+
+        if ($request->filled('status')) {
+            $requestsQuery->where('status', $request->status);
+        }
+
+        $requests = $requestsQuery
+            ->orderByRaw("FIELD(priority, 'urgent', 'normal')") // Urgent first
+            ->orderBy('created_at', 'asc')
             ->get();
 
         return view('staff.requests.index', compact('requests'));
@@ -31,6 +54,23 @@ class StaffRequestController extends Controller
             403
         );
 
+        $staff = auth()->user()->staff;
+
+        if (filled($staff->campus) && optional($request->student)->campus !== $staff->campus) {
+            abort(403);
+        }
+
+        if (filled($staff->faculty) && optional($request->student)->faculty !== $staff->faculty) {
+            abort(403);
+        }
+
+        if (filled($staff->department)) {
+            $studentDepartment = optional($request->student)->department ?? optional($request->student)->program;
+            if ($studentDepartment !== $staff->department) {
+                abort(403);
+            }
+        }
+
         return view('staff.requests.show', compact('request'));
     }
 
@@ -40,7 +80,8 @@ class StaffRequestController extends Controller
         $r->validate([
             'message' => 'required|string',
             'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx',
-            'status' => 'required|in:Submitted,In Review,Awaiting Student Response,Appointment Scheduled,Appointment Required,Resolved,Closed'
+            'status' => 'required|in:Submitted,In Review,Awaiting Student Response,Appointment Scheduled,Appointment Required,Resolved,Closed',
+            'priority' => 'required|in:normal,urgent',
         ]);
 
         $filePath = null;
@@ -58,6 +99,7 @@ class StaffRequestController extends Controller
 
         // Update request status
         $request->status = $r->status;
+        $request->priority = $r->priority;
         $request->save();
 
         Mail::to($request->student->user->email)

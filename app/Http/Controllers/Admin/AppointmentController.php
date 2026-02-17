@@ -37,6 +37,23 @@ class AppointmentController extends Controller
         return view('admin.appointments.show', compact('appointment'));
     }
 
+    public function showStudent(Appointment $appointment)
+    {
+        $student = auth()->user()->student;
+
+        if (!$student || $appointment->serviceRequest->student_id !== $student->id) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $appointment->load([
+            'serviceRequest.student.user',
+            'staff.user',
+            'staff.office'
+        ]);
+
+        return view('student.appointments.show', compact('appointment'));
+    }
+
     public function showStaff(Appointment $appointment)
     {
         $appointment->load([
@@ -108,15 +125,27 @@ class AppointmentController extends Controller
     }
 
     // staff views appointment list
-    public function staffIndex()
+    public function staffIndex(Request $request)
     {
         $staff = auth()->user()->staff;
-        $appointments = Appointment::with(['serviceRequest.student.user'])
-            ->where('staff_id', $staff->id)
+        $filter = $request->query('filter', 'all');
+
+        $appointmentsQuery = Appointment::with(['serviceRequest.student.user', 'staff.user', 'staff.office'])
+            ->where('staff_id', $staff->id);
+
+        if ($filter === 'today') {
+            $appointmentsQuery->whereDate('appointment_date', now()->toDateString());
+        } elseif ($filter === 'tomorrow') {
+            $appointmentsQuery->whereDate('appointment_date', now()->addDay()->toDateString());
+        }
+
+        $appointments = $appointmentsQuery
             ->orderBy('appointment_date')
             ->orderBy('appointment_time')
-            ->paginate(10);
-        return view('staff.appointments.index', compact('appointments'));
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('staff.appointments.index', compact('appointments', 'filter'));
     }
 
     // student views appointment list
@@ -149,6 +178,7 @@ class AppointmentController extends Controller
             ->back()
             ->with('success', 'Appointment rescheduled successfully.');
     }
+
     public function rescheduleStaff(Request $request, Appointment $appointment)
     {
         $request->validate([

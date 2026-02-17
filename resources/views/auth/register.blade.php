@@ -131,13 +131,23 @@
                                 <!-- Password -->
                                 <div class="mb-3">
                                     <label class="form-label">Password</label>
-                                    <input type="password" name="password" class="form-control" required>
+                                    <div class="input-group">
+                                        <input type="password" id="password" name="password" class="form-control" required>
+                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <!-- Confirm Password -->
                                 <div class="mb-4">
                                     <label class="form-label">Confirm Password</label>
-                                    <input type="password" name="password_confirmation" class="form-control" required>
+                                    <div class="input-group">
+                                        <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required>
+                                        <button class="btn btn-outline-secondary" type="button" id="togglePasswordConfirmation">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary w-100">
@@ -160,6 +170,22 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function setupPasswordToggle(inputId, buttonId) {
+            const input = document.getElementById(inputId);
+            const button = document.getElementById(buttonId);
+            const icon = button.querySelector('i');
+
+            button.addEventListener('click', function () {
+                const isHidden = input.type === 'password';
+                input.type = isHidden ? 'text' : 'password';
+                icon.className = isHidden ? 'bi bi-eye-slash' : 'bi bi-eye';
+            });
+        }
+
+        setupPasswordToggle('password', 'togglePassword');
+        setupPasswordToggle('password_confirmation', 'togglePasswordConfirmation');
+    </script>
 </body>
 
 </html>

@@ -20,6 +20,22 @@
 
                 <div class="card card-bordered card-preview">
                     <div class="card-inner">
+                        <form method="GET" class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                            <span class="text-muted small">Filter:</span>
+                            <button type="submit" name="filter" value="today"
+                                class="btn btn-sm {{ ($filter ?? 'all') === 'today' ? 'btn-primary' : 'btn-outline-primary' }}">
+                                Today
+                            </button>
+                            <button type="submit" name="filter" value="tomorrow"
+                                class="btn btn-sm {{ ($filter ?? 'all') === 'tomorrow' ? 'btn-primary' : 'btn-outline-primary' }}">
+                                Tomorrow
+                            </button>
+                            <button type="submit" name="filter" value="all"
+                                class="btn btn-sm {{ ($filter ?? 'all') === 'all' ? 'btn-primary' : 'btn-outline-primary' }}">
+                                All
+                            </button>
+                        </form>
+
                         <table class="datatable-init nowrap nk-tb-list nk-tb-ulist"
                             data-auto-responsive="true">
                             <thead>

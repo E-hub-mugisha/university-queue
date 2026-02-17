@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
+use Maatwebsite\Excel\Excel as ExcelWriter;
 use App\Exports\ServiceRequestsExport;
 use App\Http\Controllers\Controller;
 use App\Models\Office;
@@ -51,20 +51,22 @@ class ReportController extends Controller
     }
 
     public function downloadExcel(Request $request)
-    {
-        return Excel::download(
-            new ServiceRequestsExport($request),
-            'service-requests-report.xlsx'
-        );
-    }
+{
+    return Excel::download(
+        new ServiceRequestsExport($request),
+        'service-requests-report.xlsx',
+        ExcelWriter::XLSX
+    );
+}
 
-    public function downloadCsv(Request $request)
-    {
-        return Excel::download(
-            new ServiceRequestsExport($request),
-            'service-requests-report.csv'
-        );
-    }
+public function downloadCsv(Request $request)
+{
+    return Excel::download(
+        new ServiceRequestsExport($request),
+        'service-requests-report.csv',
+        ExcelWriter::CSV
+    );
+}
 
     private function filteredData(Request $request)
     {

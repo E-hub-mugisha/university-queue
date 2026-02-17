@@ -272,6 +272,87 @@
                             <option value="admin">Admin</option>
                         </select>
                     </div>
+                    <div id="studentFields">
+                        <div class="mb-3">
+                            <label>Student Number</label>
+                            <input type="text" name="student_number" id="student_number" class="form-control" placeholder="12345/2026">
+                        </div>
+                        <div class="mb-3">
+                            <label>Faculty</label>
+                            <select name="faculty" id="student_faculty" class="form-control">
+                                <option value="">Select Faculty</option>
+                                <option value="Faculty of Law">Faculty of Law</option>
+                                <option value="Faculty of Economic Sciences &amp; Management">Faculty of Economic Sciences &amp; Management</option>
+                                <option value="Faculty of Environmental Studies">Faculty of Environmental Studies</option>
+                                <option value="Faculty of Computing and Information Sciences">Faculty of Computing and Information Sciences</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Department</label>
+                            <select name="department" id="student_department" class="form-control" disabled>
+                                <option value="">Select Faculty First</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Campus</label>
+                            <select name="campus" id="student_campus" class="form-control">
+                                <option value="">Select Campus</option>
+                                <option value="Kigali Campus">Kigali Campus</option>
+                                <option value="Rwamagana Campus">Rwamagana Campus</option>
+                                <option value="Nyanza Campus">Nyanza Campus</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Phone</label>
+                            <input type="text" name="phone" id="student_phone" class="form-control">
+                        </div>
+                    </div>
+
+                    <div id="staffFields" style="display:none;">
+                        <div class="mb-3">
+                            <label>Office</label>
+                            <select name="office_id" id="staff_office_id" class="form-control">
+                                <option value="">Select Office</option>
+                                @foreach($offices as $office)
+                                <option value="{{ $office->id }}">{{ $office->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Position</label>
+                            <input type="text" name="position" id="staff_position" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label>Campus</label>
+                            <select name="campus" id="staff_campus" class="form-control">
+                                <option value="">Select Campus</option>
+                                <option value="Kigali Campus">Kigali Campus</option>
+                                <option value="Rwamagana Campus">Rwamagana Campus</option>
+                                <option value="Nyanza Campus">Nyanza Campus</option>
+                            </select>
+                        </div>
+                        <div class="mb-3" id="staffFacultyGroup" style="display:none;">
+                            <label>Faculty</label>
+                            <select name="faculty" id="staff_faculty" class="form-control">
+                                <option value="">Select Faculty</option>
+                                <option value="Faculty of Law">Faculty of Law</option>
+                                <option value="Faculty of Economic Sciences &amp; Management">Faculty of Economic Sciences &amp; Management</option>
+                                <option value="Faculty of Environmental Studies">Faculty of Environmental Studies</option>
+                                <option value="Faculty of Computing and Information Sciences">Faculty of Computing and Information Sciences</option>
+                            </select>
+                        </div>
+                        <div class="mb-3" id="staffDepartmentGroup" style="display:none;">
+                            <label>Department</label>
+                            <select name="department" id="staff_department" class="form-control" disabled>
+                                <option value="">Select Faculty First</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Phone</label>
+                            <input type="text" name="phone" id="staff_phone" class="form-control">
+                        </div>
+                    </div>
+
                     <div class="mb-3">
                         <label>Password</label>
                         <input type="password" name="password" id="password" class="form-control" required>
@@ -304,14 +385,130 @@
 </div>
 @endif
 <script>
+    const departmentsByFaculty = {
+        'Faculty of Law': ['Law'],
+        'Faculty of Economic Sciences & Management': [
+            'Cooperative Management & Accounting',
+            'Economics',
+            'Finance',
+            'Accounting',
+            'Marketing & Human Resource Management'
+        ],
+        'Faculty of Environmental Studies': [
+            'Rural Development',
+            'Emergency and Disaster Management',
+            'Environmental Management & Conservation'
+        ],
+        'Faculty of Computing and Information Sciences': [
+            'Software Engineering',
+            'Information Systems & Management',
+            'Information Technology'
+        ]
+    };
+
+    function populateDepartments(faculty, selectId, selectedDepartment = '') {
+        const departmentSelect = document.getElementById(selectId);
+        const departments = departmentsByFaculty[faculty] || [];
+        departmentSelect.disabled = departments.length === 0;
+        departmentSelect.innerHTML = '';
+
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = departments.length ? 'Select Department' : 'Select Faculty First';
+        departmentSelect.appendChild(placeholder);
+
+        departments.forEach(function (department) {
+            const option = document.createElement('option');
+            option.value = department;
+            option.textContent = department;
+            if (department === selectedDepartment) {
+                option.selected = true;
+            }
+            departmentSelect.appendChild(option);
+        });
+    }
+
+    function isStudentAffairsOfficeSelected() {
+        const officeSelect = document.getElementById('staff_office_id');
+        const selectedOption = officeSelect.options[officeSelect.selectedIndex];
+        if (!selectedOption) {
+            return false;
+        }
+
+        return selectedOption.text.trim().toLowerCase().includes('student affairs');
+    }
+
+    function toggleStaffAcademicScope() {
+        const showAcademicFields = isStudentAffairsOfficeSelected();
+        const staffFacultyGroup = document.getElementById('staffFacultyGroup');
+        const staffDepartmentGroup = document.getElementById('staffDepartmentGroup');
+        const staffFaculty = document.getElementById('staff_faculty');
+        const staffDepartment = document.getElementById('staff_department');
+
+        staffFacultyGroup.style.display = showAcademicFields ? '' : 'none';
+        staffDepartmentGroup.style.display = showAcademicFields ? '' : 'none';
+        staffFaculty.required = showAcademicFields;
+        staffDepartment.required = showAcademicFields;
+
+        if (!showAcademicFields) {
+            staffFaculty.value = '';
+            populateDepartments('', 'staff_department', '');
+        } else {
+            populateDepartments(staffFaculty.value, 'staff_department', staffDepartment.value);
+        }
+    }
+
+    function applyRoleFields() {
+        const role = document.getElementById('role').value;
+
+        const studentFields = document.getElementById('studentFields');
+        const staffFields = document.getElementById('staffFields');
+        const studentFieldIds = ['student_number', 'student_faculty', 'student_department', 'student_campus', 'student_phone'];
+        const staffFieldIds = ['staff_office_id', 'staff_position', 'staff_campus', 'staff_faculty', 'staff_department', 'staff_phone'];
+
+        studentFields.style.display = role === 'student' ? '' : 'none';
+        staffFields.style.display = role === 'staff' ? '' : 'none';
+
+        studentFieldIds.forEach(function (id) {
+            document.getElementById(id).disabled = role !== 'student';
+        });
+        staffFieldIds.forEach(function (id) {
+            document.getElementById(id).disabled = role !== 'staff';
+        });
+
+        document.getElementById('student_number').required = role === 'student';
+        document.getElementById('student_faculty').required = role === 'student';
+        document.getElementById('student_department').required = role === 'student';
+        document.getElementById('student_campus').required = role === 'student';
+
+        if (role === 'student') {
+            populateDepartments(document.getElementById('student_faculty').value, 'student_department', document.getElementById('student_department').value);
+        }
+        if (role === 'staff') {
+            toggleStaffAcademicScope();
+        }
+    }
+
     function resetForm() {
         document.getElementById('userForm').action = "{{ route('admin.users.store') }}";
         document.getElementById('method').value = 'POST';
         document.getElementById('name').value = '';
         document.getElementById('email').value = '';
         document.getElementById('role').value = 'student';
+        document.getElementById('student_number').value = '';
+        document.getElementById('student_faculty').value = '';
+        populateDepartments('', 'student_department', '');
+        document.getElementById('student_campus').value = '';
+        document.getElementById('student_phone').value = '';
+        document.getElementById('staff_office_id').value = '';
+        document.getElementById('staff_position').value = '';
+        document.getElementById('staff_campus').value = '';
+        document.getElementById('staff_faculty').value = '';
+        populateDepartments('', 'staff_department', '');
+        document.getElementById('staff_phone').value = '';
         document.getElementById('password').required = true;
         document.getElementById('password_confirmation').required = true;
+        applyRoleFields();
     }
 
     function editUser(id, name, email, role) {
@@ -322,6 +519,18 @@
         document.getElementById('role').value = role;
         document.getElementById('password').required = false;
         document.getElementById('password_confirmation').required = false;
+        applyRoleFields();
     }
+
+    document.getElementById('role').addEventListener('change', applyRoleFields);
+    document.getElementById('student_faculty').addEventListener('change', function () {
+        populateDepartments(this.value, 'student_department', '');
+    });
+    document.getElementById('staff_faculty').addEventListener('change', function () {
+        populateDepartments(this.value, 'staff_department', '');
+    });
+    document.getElementById('staff_office_id').addEventListener('change', toggleStaffAcademicScope);
+
+    applyRoleFields();
 </script>
 @endsection

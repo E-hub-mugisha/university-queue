@@ -74,7 +74,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('requests/{request}/reply', [ServiceRequestController::class, 'reply'])->name('requests.reply');
             Route::get('appointments', [AppointmentController::class, 'studentIndex'])->name('appointments.index');
             Route::patch('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
-            Route::get('appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
+            Route::get('appointments/{appointment}', [AppointmentController::class, 'showStudent'])->name('appointments.show');
 
             // FAQ routes
             Route::get('faq', [FaqController::class, 'faq'])->name('faq.index');

@@ -24,15 +24,30 @@ class StudentDashboardController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'program' => 'required|string|max:255',
-            'phone'   => 'required|string|max:20',
-        ]);
+        $validated = $request->validate(
+            [
+                'faculty' => 'required|string|max:255',
+                'department' => 'required|string|max:255',
+                'campus' => 'required|string|max:255',
+                'phone' => 'required|string|max:20',
+            ],
+            [
+                'faculty.required' => 'Please select a faculty.',
+                'department.required' => 'Please select a department.',
+                'campus.required' => 'Please select a campus.',
+                'phone.required' => 'Please enter your phone number.',
+            ]
+        );
 
         $student = \App\Models\Student::where('user_id', $id)->firstOrFail();
-        $student->update(
-            $request->only('program', 'phone')
-        );
+        $student->update([
+            'faculty' => $validated['faculty'],
+            'department' => $validated['department'],
+            // Keep `program` synced for older parts of the app.
+            'program' => $validated['department'],
+            'campus' => $validated['campus'],
+            'phone' => $validated['phone'],
+        ]);
 
         return redirect()->route('dashboard')
             ->with('success', 'Profile completed successfully.');

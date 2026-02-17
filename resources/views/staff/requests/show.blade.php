@@ -9,12 +9,61 @@
     <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <div class="card mb-3">
-        <div class="card-body">
-            <h5>Student Info</h5>
-            <p><strong>Name:</strong> {{ $request->student->user->name ?? 'N/A' }}</p>
-            <p><strong>Email:</strong> {{ $request->student->user->email ?? 'N/A' }}</p>
-            <p><strong>Office:</strong> {{ $request->office->name ?? 'N/A' }}</p>
+    @php
+        $student = $request->student;
+        $user = optional($student)->user;
+        $studentName = $user->name ?? 'N/A';
+        $avatarUrl = $student->avatar
+            ?? 'https://ui-avatars.com/api/?name=' . urlencode($studentName !== 'N/A' ? $studentName : 'Student') . '&background=0D6EFD&color=fff';
+    @endphp
+    <div class="card mb-4 shadow-sm rounded-4">
+        <div class="card-body p-4">
+            <h5 class="mb-3">Student Info</h5>
+            <div class="row g-3 align-items-start">
+                <div class="col-12 col-md-auto text-center">
+                    <img src="{{ $avatarUrl }}"
+                        class="rounded-circle border shadow-sm"
+                        style="width: 84px; height: 84px; object-fit: cover;"
+                        alt="Student Avatar">
+                </div>
+                <div class="col">
+                    <h5 class="mb-1">{{ $studentName }}</h5>
+                    <p class="mb-3 text-muted text-break">{{ $user->email ?? 'N/A' }}</p>
+
+                    <div class="row row-cols-1 row-cols-sm-2 g-2">
+                        <div class="col">
+                            <div class="rounded-3 p-2 h-100 border-0">
+                                <small class="text-muted d-block">Student Number</small>
+                                <span class="fw-semibold">{{ $student->student_number ?? 'N/A' }}</span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="rounded-3 p-2 h-100 border-0">
+                                <small class="text-muted d-block">Phone</small>
+                                <span class="fw-semibold text-break">{{ $student->phone ?? 'N/A' }}</span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="rounded-3 p-2 h-100 border-0">
+                                <small class="text-muted d-block">Department</small>
+                                <span class="fw-semibold">{{ $student->program ?? 'N/A' }}</span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="rounded-3 p-2 h-100 border-0">
+                                <small class="text-muted d-block">Campus</small>
+                                <span class="fw-semibold">{{ $student->campus ?? 'N/A' }}</span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="rounded-3 p-2 h-100 border-0">
+                                <small class="text-muted d-block">Office</small>
+                                <span class="fw-semibold">{{ $request->office->name ?? 'N/A' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -44,6 +93,12 @@
                 <strong>Status:</strong>
                 <span class="badge bg-{{ $statusClass }}">
                     {{ $request->status }}
+                </span>
+            </p>
+            <p>
+                <strong>Priority:</strong>
+                <span class="badge bg-{{ $request->priority === 'urgent' ? 'danger' : 'secondary' }}">
+                    {{ ucfirst($request->priority ?? 'normal') }}
                 </span>
             </p>
 
@@ -94,6 +149,14 @@
                         <option value="Appointment Required" {{ $request->status=='Appointment Required'?'selected':'' }}>Appointment Required</option>
                         <option value="Resolved" {{ $request->status=='Resolved'?'selected':'' }}>Resolved</option>
                         <option value="Closed" {{ $request->status=='Closed'?'selected':'' }}>Closed</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="priority" class="form-label">Priority</label>
+                    <select name="priority" class="form-select" required>
+                        <option value="normal" {{ $request->priority=='normal'?'selected':'' }}>Normal</option>
+                        <option value="urgent" {{ $request->priority=='urgent'?'selected':'' }}>Urgent</option>
                     </select>
                 </div>
 

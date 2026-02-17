@@ -45,7 +45,16 @@ class RegisteredUserController extends Controller
                 'required',
                 'string',
                 'max:50',
-                'unique:students,student_number'
+                'unique:students,student_number',
+                'regex:/^\d{5}\/\d{4}$/',
+                function ($attribute, $value, $fail) {
+                    $year = (int) explode('/', $value)[1];
+                    $currentYear = (int) now()->format('Y');
+
+                    if ($year < 1900 || $year > $currentYear) {
+                        $fail('The student number year must be a valid 4-digit year and cannot be in the future.');
+                    }
+                },
             ],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);

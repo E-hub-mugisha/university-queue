@@ -4,6 +4,9 @@
 
 @php
 $student = auth()->user()->student;
+$selectedFaculty = old('faculty', $student->faculty ?? '');
+$selectedDepartment = old('department', $student->department ?? $student->program ?? '');
+$selectedCampus = old('campus', $student->campus ?? '');
 @endphp
 
 <div class="container">
@@ -44,17 +47,63 @@ $student = auth()->user()->student;
                         @csrf
                         @method('PUT')
                         <div class="mb-3">
-                            <label class="form-label">Program</label>
-                            <input type="text" name="program"
+                            <label class="form-label">Faculty</label>
+                            <select id="faculty" name="faculty" class="form-control" required>
+                                <option value="">-- Select Faculty --</option>
+                                <option value="Faculty of Law" {{ $selectedFaculty == 'Faculty of Law' ? 'selected' : '' }}>Faculty of Law</option>
+                                <option value="Faculty of Economic Sciences &amp; Management" {{ $selectedFaculty == 'Faculty of Economic Sciences & Management' ? 'selected' : '' }}>
+                                    Faculty of Economic Sciences &amp; Management
+                                </option>
+                                <option value="Faculty of Environmental Studies" {{ $selectedFaculty == 'Faculty of Environmental Studies' ? 'selected' : '' }}>
+                                    Faculty of Environmental Studies
+                                </option>
+                                <option value="Faculty of Computing and Information Sciences" {{ $selectedFaculty == 'Faculty of Computing and Information Sciences' ? 'selected' : '' }}>
+                                    Faculty of Computing and Information Sciences
+                                </option>
+                            </select>
+                            @error('faculty')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Department</label>
+                            <select
+                                id="department"
+                                name="department"
                                 class="form-control"
-                                required>
+                                data-selected-department="{{ $selectedDepartment }}"
+                                required
+                                disabled>
+                                <option value="">-- Select Faculty First --</option>
+                            </select>
+                            @error('department')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Campus</label>
+                            <select name="campus" class="form-control" required>
+                                <option value="">-- Select Campus --</option>
+                                <option value="Kigali Campus" {{ $selectedCampus == 'Kigali Campus' ? 'selected' : '' }}>Kigali Campus</option>
+                                <option value="Rwamagana Campus" {{ $selectedCampus == 'Rwamagana Campus' ? 'selected' : '' }}>Rwamagana Campus</option>
+                                <option value="Nyanza Campus" {{ $selectedCampus == 'Nyanza Campus' ? 'selected' : '' }}>Nyanza Campus</option>
+                            </select>
+                            @error('campus')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
 
                         <div class="mb-4">
                             <label class="form-label">Phone</label>
                             <input type="text" name="phone"
                                 class="form-control"
+                                value="{{ old('phone', $student->phone ?? '') }}"
                                 required>
+                            @error('phone')
+                            <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
 
                         <button class="btn btn-primary w-100">
@@ -67,4 +116,66 @@ $student = auth()->user()->student;
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const facultySelect = document.getElementById('faculty');
+    const departmentSelect = document.getElementById('department');
+
+    const selectedDepartment = departmentSelect.dataset.selectedDepartment || '';
+
+    const departmentsByFaculty = {
+        'Faculty of Law': [
+            'Law'
+        ],
+        'Faculty of Economic Sciences & Management': [
+            'Cooperative Management & Accounting',
+            'Economics',
+            'Finance',
+            'Accounting',
+            'Marketing & Human Resource Management'
+        ],
+        'Faculty of Environmental Studies': [
+            'Rural Development',
+            'Emergency and Disaster Management',
+            'Environmental Management & Conservation'
+        ],
+        'Faculty of Computing and Information Sciences': [
+            'Software Engineering',
+            'Information Systems & Management',
+            'Information Technology'
+        ]
+    };
+
+    function populateDepartments(faculty, departmentToSelect = '') {
+        const departments = departmentsByFaculty[faculty] || [];
+
+        departmentSelect.disabled = departments.length === 0;
+        departmentSelect.innerHTML = '';
+
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = departments.length
+            ? '-- Select Department --'
+            : '-- Select Faculty First --';
+        departmentSelect.appendChild(placeholder);
+
+        departments.forEach(function(department) {
+            const option = document.createElement('option');
+            option.value = department;
+            option.textContent = department;
+            if (department === departmentToSelect) {
+                option.selected = true;
+            }
+            departmentSelect.appendChild(option);
+        });
+    }
+
+    populateDepartments(facultySelect.value, selectedDepartment);
+
+    facultySelect.addEventListener('change', function() {
+        populateDepartments(this.value);
+    });
+});
+</script>
 @endsection

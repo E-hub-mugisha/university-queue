@@ -23,6 +23,8 @@
                                     <option value="">All Status</option>
                                     <option value="Submitted" {{ request('status')=='Submitted' ? 'selected' : '' }}>Submitted</option>
                                     <option value="In Review" {{ request('status')=='In Review' ? 'selected' : '' }}>In Review</option>
+                                    <option value="Awaiting Student Response" {{ request('status')=='Awaiting Student Response' ? 'selected' : '' }}>Awaiting Student Response</option>
+                                    <option value="Appointment Scheduled" {{ request('status')=='Appointment Scheduled' ? 'selected' : '' }}>Appointment Scheduled</option>
                                     <option value="Resolved" {{ request('status')=='Resolved' ? 'selected' : '' }}>Resolved</option>
                                 </select>
                             </div>

@@ -44,8 +44,9 @@
                                     <th class="nk-tb-col">Student No</th>
                                     <th class="nk-tb-col">Name</th>
                                     <th class="nk-tb-col">Email</th>
-                                    <th class="nk-tb-col">Program</th>
-                                    <th class="nk-tb-col">Level</th>
+                                    <th class="nk-tb-col">Faculty</th>
+                                    <th class="nk-tb-col">Department</th>
+                                    <th class="nk-tb-col">Campus</th>
                                     <th class="nk-tb-col">Phone</th>
                                     <th class="nk-tb-col nk-tb-col-tools text-end">Actions</th>
                                 </tr>
@@ -57,8 +58,9 @@
                                     <td class="nk-tb-col">{{ $s->student_number }}</td>
                                     <td class="nk-tb-col">{{ $s->user->name }}</td>
                                     <td class="nk-tb-col">{{ $s->user->email }}</td>
-                                    <td class="nk-tb-col">{{ $s->program }}</td>
-                                    <td class="nk-tb-col">{{ $s->level }}</td>
+                                    <td class="nk-tb-col">{{ $s->faculty ?? 'N/A' }}</td>
+                                    <td class="nk-tb-col">{{ $s->department ?? $s->program ?? 'N/A' }}</td>
+                                    <td class="nk-tb-col">{{ $s->campus ?? 'N/A' }}</td>
                                     <td class="nk-tb-col">{{ $s->phone }}</td>
                                     <td class="nk-tb-col nk-tb-col-tools">
                                         <ul class="nk-tb-actions gx-1">
@@ -71,7 +73,7 @@
                                                         <ul class="link-list-opt no-bdr">
                                                             <li>
                                                                 <a role="button" class="text-warning" data-bs-toggle="modal" data-bs-target="#studentModal"
-                                                                    onclick="editStudent({{ $s->id }}, '{{ $s->user->name }}', '{{ $s->user->email }}', '{{ $s->program }}', '{{ $s->level }}', '{{ $s->phone }}')">Edit</a>
+                                                                    onclick="editStudent({{ $s->id }}, '{{ $s->user->name }}', '{{ $s->user->email }}', '{{ $s->faculty }}', '{{ $s->department ?? $s->program }}', '{{ $s->campus }}', '{{ $s->phone }}')">Edit</a>
                                                             </li>
                                                             <li>
                                                                 <a role="button" class="text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $s->id }}">Delete</a>
@@ -160,13 +162,31 @@
                     </div>
 
                     <div class="mb-2">
-                        <label>Program</label>
-                        <input class="form-control" name="program" id="program" placeholder="Program">
+                        <label>Faculty</label>
+                        <select name="faculty" id="faculty" class="form-control" required>
+                            <option value="">Select Faculty</option>
+                            <option value="Faculty of Law">Faculty of Law</option>
+                            <option value="Faculty of Economic Sciences &amp; Management">Faculty of Economic Sciences &amp; Management</option>
+                            <option value="Faculty of Environmental Studies">Faculty of Environmental Studies</option>
+                            <option value="Faculty of Computing and Information Sciences">Faculty of Computing and Information Sciences</option>
+                        </select>
                     </div>
 
                     <div class="mb-2">
-                        <label>Level</label>
-                        <input class="form-control" name="level" id="level" placeholder="Level">
+                        <label>Department</label>
+                        <select name="department" id="department" class="form-control" required disabled>
+                            <option value="">Select Faculty First</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-2">
+                        <label>Campus</label>
+                        <select name="campus" id="campus" class="form-control" required>
+                            <option value="">Select Campus</option>
+                            <option value="Kigali Campus">Kigali Campus</option>
+                            <option value="Rwamagana Campus">Rwamagana Campus</option>
+                            <option value="Nyanza Campus">Nyanza Campus</option>
+                        </select>
                     </div>
 
                     <div class="mb-2">
@@ -195,15 +215,16 @@ function resetForm() {
     // Clear all fields
     document.getElementById('name').value = "";
     document.getElementById('email').value = "";
-    documnent.getElementById('student_number').value = "";
+    document.getElementById('student_number').value = "";
     document.getElementById('password').value = "";
     document.getElementById('password_confirmation').value = "";
-    document.getElementById('program').value = "";
-    document.getElementById('level').value = "";
+    document.getElementById('faculty').value = "";
+    document.getElementById('campus').value = "";
+    populateDepartments('', '');
     document.getElementById('phone').value = "";
 }
 
-function editStudent(id, name, email, program, level, phone) {
+function editStudent(id, name, email, faculty, department, campus, phone) {
     document.getElementById('studentForm').action = "/admin/students/" + id;
     document.getElementById('method').value = "PUT";
 
@@ -213,14 +234,65 @@ function editStudent(id, name, email, program, level, phone) {
     document.getElementById('student_number').value = "";
     document.getElementById('password').value = "";
     document.getElementById('password_confirmation').value = "";
-    document.getElementById('program').value = program;
-    document.getElementById('level').value = level;
+    document.getElementById('faculty').value = faculty || "";
+    populateDepartments(faculty || '', department || '');
+    document.getElementById('campus').value = campus || "";
     document.getElementById('phone').value = phone;
 
     // Password is optional during edit
     document.getElementById('password').removeAttribute('required');
     document.getElementById('password_confirmation').removeAttribute('required');
 }
+
+const departmentsByFaculty = {
+    'Faculty of Law': [
+        'Law'
+    ],
+    'Faculty of Economic Sciences & Management': [
+        'Cooperative Management & Accounting',
+        'Economics',
+        'Finance',
+        'Accounting',
+        'Marketing & Human Resource Management'
+    ],
+    'Faculty of Environmental Studies': [
+        'Rural Development',
+        'Emergency and Disaster Management',
+        'Environmental Management & Conservation'
+    ],
+    'Faculty of Computing and Information Sciences': [
+        'Software Engineering',
+        'Information Systems & Management',
+        'Information Technology'
+    ]
+};
+
+function populateDepartments(faculty, selectedDepartment = '') {
+    const departmentSelect = document.getElementById('department');
+    const departments = departmentsByFaculty[faculty] || [];
+
+    departmentSelect.disabled = departments.length === 0;
+    departmentSelect.innerHTML = '';
+
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = departments.length ? 'Select Department' : 'Select Faculty First';
+    departmentSelect.appendChild(placeholder);
+
+    departments.forEach(function (department) {
+        const option = document.createElement('option');
+        option.value = department;
+        option.textContent = department;
+        if (department === selectedDepartment) {
+            option.selected = true;
+        }
+        departmentSelect.appendChild(option);
+    });
+}
+
+document.getElementById('faculty').addEventListener('change', function () {
+    populateDepartments(this.value, '');
+});
 </script>
 
 

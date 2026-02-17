@@ -68,15 +68,6 @@
                             @enderror
                         </div>
 
-                        {{-- Priority --}}
-                        <div class="mb-3">
-                            <label class="form-label">Priority</label>
-                            <select name="priority" class="form-select">
-                                <option value="normal" {{ old('priority') == 'normal' ? 'selected' : '' }}>Normal</option>
-                                <option value="urgent" {{ old('priority') == 'urgent' ? 'selected' : '' }}>Urgent</option>
-                            </select>
-                        </div>
-
                         {{-- Description --}}
                         <div class="mb-3">
                             <label class="form-label">Description (Optional)</label>

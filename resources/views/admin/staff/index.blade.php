@@ -30,8 +30,8 @@
                                     <th class="nk-tb-col">Name</th>
                                     <th class="nk-tb-col">Email</th>
                                     <th class="nk-tb-col">Office</th>
+                                    <th class="nk-tb-col">Campus</th>
                                     <th class="nk-tb-col">Position</th>
-                                    <th class="nk-tb-col">Phone</th>
                                     <th class="nk-tb-col nk-tb-col-tools text-end">Actions</th>
                                 </tr>
                             </thead>
@@ -41,8 +41,8 @@
                                     <td class="nk-tb-col">{{ $staff->user->name }}</td>
                                     <td class="nk-tb-col">{{ $staff->user->email }}</td>
                                     <td class="nk-tb-col">{{ $staff->office?->name }}</td>
+                                    <td class="nk-tb-col">{{ $staff->campus ?? 'N/A' }}</td>
                                     <td class="nk-tb-col">{{ $staff->position }}</td>
-                                    <td class="nk-tb-col">{{ $staff->phone }}</td>
                                     <td class="nk-tb-col nk-tb-col-tools">
                                         <ul class="nk-tb-actions gx-1">
                                             <li>
@@ -56,7 +56,7 @@
                                                         <ul class="link-list-opt no-bdr">
                                                             <li>
                                                                 <a role="button" class="text-warning" data-bs-toggle="modal" data-bs-target="#staffModal"
-                                                                    onclick="editStaff({{ $staff->id }}, '{{ $staff->user->name }}', '{{ $staff->user->email }}', '{{ $staff->office_id }}', '{{ $staff->position }}', '{{ $staff->phone }}')">Edit</a>
+                                                                    onclick="editStaff({{ $staff->id }}, '{{ $staff->user->name }}', '{{ $staff->user->email }}', '{{ $staff->office_id }}', '{{ $staff->campus }}', '{{ $staff->faculty }}', '{{ $staff->department }}', '{{ $staff->position }}', '{{ $staff->phone }}')">Edit</a>
                                                             </li>
 
                                                             <li>
@@ -118,6 +118,34 @@
                     </div>
 
                     <div class="mb-3">
+                        <label>Campus</label>
+                        <select name="campus" id="campus" class="form-control">
+                            <option value="">Select Campus</option>
+                            <option value="Kigali Campus">Kigali Campus</option>
+                            <option value="Rwamagana Campus">Rwamagana Campus</option>
+                            <option value="Nyanza Campus">Nyanza Campus</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="facultyGroup" style="display: none;">
+                        <label>Faculty</label>
+                        <select name="faculty" id="faculty" class="form-control">
+                            <option value="">Select Faculty</option>
+                            <option value="Faculty of Law">Faculty of Law</option>
+                            <option value="Faculty of Economic Sciences &amp; Management">Faculty of Economic Sciences &amp; Management</option>
+                            <option value="Faculty of Environmental Studies">Faculty of Environmental Studies</option>
+                            <option value="Faculty of Computing and Information Sciences">Faculty of Computing and Information Sciences</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="departmentGroup" style="display: none;">
+                        <label>Department</label>
+                        <select name="department" id="department" class="form-control" disabled>
+                            <option value="">Select Faculty First</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
                         <label>Phone</label>
                         <input type="text" name="phone" id="phone" class="form-control">
                     </div>
@@ -150,22 +178,120 @@
         document.getElementById('name').value = '';
         document.getElementById('email').value = '';
         document.getElementById('office_id').value = '';
+        document.getElementById('campus').value = '';
+        document.getElementById('faculty').value = '';
+        populateDepartments('', '');
+        toggleAcademicScopeFields();
         document.getElementById('position').value = '';
         document.getElementById('phone').value = '';
         document.getElementById('password').required = true;
         document.getElementById('password_confirmation').required = true;
     }
 
-    function editStaff(id, name, email, office_id, position, phone) {
+    function editStaff(id, name, email, office_id, campus, faculty, department, position, phone) {
         document.getElementById('staffForm').action = "/admin/staff/" + id;
         document.getElementById('method').value = 'PUT';
         document.getElementById('name').value = name;
         document.getElementById('email').value = email;
         document.getElementById('office_id').value = office_id;
+        document.getElementById('campus').value = campus;
+        toggleAcademicScopeFields();
+        document.getElementById('faculty').value = faculty || '';
+        if (isStudentAffairsOfficeSelected()) {
+            populateDepartments(faculty, department);
+        } else {
+            populateDepartments('', '');
+        }
         document.getElementById('position').value = position;
         document.getElementById('phone').value = phone;
         document.getElementById('password').required = false;
         document.getElementById('password_confirmation').required = false;
     }
+
+    const departmentsByFaculty = {
+        'Faculty of Law': [
+            'Law'
+        ],
+        'Faculty of Economic Sciences & Management': [
+            'Cooperative Management & Accounting',
+            'Economics',
+            'Finance',
+            'Accounting',
+            'Marketing & Human Resource Management'
+        ],
+        'Faculty of Environmental Studies': [
+            'Rural Development',
+            'Emergency and Disaster Management',
+            'Environmental Management & Conservation'
+        ],
+        'Faculty of Computing and Information Sciences': [
+            'Software Engineering',
+            'Information Systems & Management',
+            'Information Technology'
+        ]
+    };
+
+    function populateDepartments(faculty, selectedDepartment = '') {
+        const departmentSelect = document.getElementById('department');
+        const departments = departmentsByFaculty[faculty] || [];
+
+        departmentSelect.disabled = departments.length === 0;
+        departmentSelect.innerHTML = '';
+
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = departments.length ? 'Select Department' : 'Select Faculty First';
+        departmentSelect.appendChild(placeholder);
+
+        departments.forEach(function (department) {
+            const option = document.createElement('option');
+            option.value = department;
+            option.textContent = department;
+            if (department === selectedDepartment) {
+                option.selected = true;
+            }
+            departmentSelect.appendChild(option);
+        });
+    }
+
+    document.getElementById('faculty').addEventListener('change', function () {
+        populateDepartments(this.value, '');
+    });
+
+    function isStudentAffairsOfficeSelected() {
+        const officeSelect = document.getElementById('office_id');
+        const selectedOption = officeSelect.options[officeSelect.selectedIndex];
+        if (!selectedOption) {
+            return false;
+        }
+
+        return selectedOption.text.trim().toLowerCase().includes('student affairs');
+    }
+
+    function toggleAcademicScopeFields() {
+        const facultyGroup = document.getElementById('facultyGroup');
+        const departmentGroup = document.getElementById('departmentGroup');
+        const facultySelect = document.getElementById('faculty');
+        const departmentSelect = document.getElementById('department');
+
+        const showAcademicFields = isStudentAffairsOfficeSelected();
+
+        facultyGroup.style.display = showAcademicFields ? '' : 'none';
+        departmentGroup.style.display = showAcademicFields ? '' : 'none';
+
+        facultySelect.required = showAcademicFields;
+        departmentSelect.required = showAcademicFields;
+
+        if (!showAcademicFields) {
+            facultySelect.value = '';
+            populateDepartments('', '');
+        } else {
+            populateDepartments(facultySelect.value, departmentSelect.value);
+        }
+    }
+
+    document.getElementById('office_id').addEventListener('change', function () {
+        toggleAcademicScopeFields();
+    });
 </script>
 @endsection
